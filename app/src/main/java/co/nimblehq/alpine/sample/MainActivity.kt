@@ -1,12 +1,73 @@
 package co.nimblehq.alpine.sample
 
-import androidx.appcompat.app.AppCompatActivity
+import android.Manifest.permission.CAMERA
+import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
+import android.view.View
+import android.widget.Button
+import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat.checkSelfPermission
 import co.nimblehq.alpine.R
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : ComponentActivity(), View.OnClickListener {
+
+    private val requestPermissionLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted: Boolean ->
+            if (isGranted) {
+                navigateToCamera()
+            } else {
+                showRationale()
+            }
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        findViewById<Button>(R.id.btn_main_start).setOnClickListener(this)
+    }
+
+    override fun onClick(view: View) {
+        when (view.id) {
+            R.id.btn_main_start -> checkCameraPermissionAndNavigateToCamera()
+            else -> IllegalArgumentException("").printStackTrace()
+        }
+    }
+
+    private fun checkCameraPermissionAndNavigateToCamera() {
+        when {
+            checkSelfPermission(this, CAMERA) == PERMISSION_GRANTED -> navigateToCamera()
+            shouldShowRequestPermissionRationale(CAMERA) -> showRationale()
+            else -> requestPermissionLauncher.launch(CAMERA)
+        }
+    }
+
+    private fun navigateToCamera() {
+        // TODO: navigate to the camera screen.
+        Toast.makeText(this, "Not implemented yet :(", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showRationale() {
+        AlertDialog.Builder(this)
+            .setMessage(getString(R.string.rationale_permission_camera))
+            .setPositiveButton(R.string.ok) { _, _ -> navigateToSettings() }
+            .setNegativeButton(R.string.no, null)
+            .show()
+    }
+
+    private fun navigateToSettings() {
+        val intent = Intent()
+        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivity(intent)
     }
 }
