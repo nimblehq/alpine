@@ -32,12 +32,19 @@ class MainActivity : ComponentActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.btn_main_start).setOnClickListener(this)
+        listOf<Button>(
+            findViewById(R.id.btn_main_start),
+            findViewById(R.id.btn_main_enter_manually)
+        ).forEach { it.setOnClickListener(this) }
     }
 
     override fun onClick(view: View) {
         when (view.id) {
             R.id.btn_main_start -> checkCameraPermissionAndNavigateToCamera()
+            R.id.btn_main_enter_manually -> {
+                // TODO: navigate to the manual MRZ info screen.
+                Toast.makeText(this, "Not implemented yet :(", Toast.LENGTH_SHORT).show()
+            }
             else -> IllegalArgumentException("").printStackTrace()
         }
     }
