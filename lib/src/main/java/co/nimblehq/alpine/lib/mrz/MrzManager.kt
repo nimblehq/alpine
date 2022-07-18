@@ -4,6 +4,7 @@ package co.nimblehq.alpine.lib.mrz
 
 import android.graphics.BitmapFactory
 import android.util.Log
+import co.nimblehq.alpine.lib.model.MrzInfo
 import co.nimblehq.alpine.lib.mrz.MrzProcessorException.*
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.common.InputImage
@@ -12,23 +13,8 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.io.File
 import java.util.regex.Pattern
 
-interface ResultListener {
-    fun onSuccess(mrzInfo: MrzInfo)
-
-    fun onError(e: MrzProcessorException)
-}
-
-sealed class MrzProcessorException : Exception() {
-    object DefaultMrzProcessorException : MrzProcessorException()
-    object InvalidMrzInfoMrzProcessorException : MrzProcessorException()
-    object MrzInfoNotFoundMrzProcessorException : MrzProcessorException()
-    object FileNotFoundMrzProcessorException : MrzProcessorException()
-    object TextNotFoundMrzProcessorException : MrzProcessorException()
-    object TextNotRecognizedMrzProcessorException : MrzProcessorException()
-}
-
 interface MrzProcessor {
-    fun processImageFile(filePath: String, resultListener: ResultListener)
+    fun processImageFile(filePath: String, mrzProcessorResultListener: MrzProcessorResultListener)
 
     companion object {
         @JvmStatic
@@ -52,15 +38,15 @@ private class MrzProcessorImpl : MrzProcessor {
     private val textRecognizer: TextRecognizer by lazy {
         TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
     }
-    private lateinit var resultListener: ResultListener
+    private lateinit var mrzProcessorResultListener: MrzProcessorResultListener
     private var scannedTextBuffer: String = ""
     private var isMrzDetected: Boolean = false
 
     @Suppress("TooGenericExceptionCaught")
     @Throws(MlKitException::class)
-    override fun processImageFile(filePath: String, resultListener: ResultListener) {
+    override fun processImageFile(filePath: String, mrzProcessorResultListener: MrzProcessorResultListener) {
         isMrzDetected = false
-        this.resultListener = resultListener
+        this.mrzProcessorResultListener = mrzProcessorResultListener
         try {
             val file = File(filePath)
             if (file.exists()) {
@@ -70,11 +56,11 @@ private class MrzProcessorImpl : MrzProcessor {
                     .addOnSuccessListener(::onSuccess)
                     .addOnFailureListener { onFailure(TextNotRecognizedMrzProcessorException) }
             } else {
-                this.onFailure(FileNotFoundMrzProcessorException)
+                onFailure(FileNotFoundMrzProcessorException)
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            this.onFailure(DefaultMrzProcessorException)
+            onFailure(DefaultMrzProcessorException)
         }
     }
 
@@ -89,11 +75,11 @@ private class MrzProcessorImpl : MrzProcessor {
             }
             if (!isMrzDetected) {
                 Log.i(TAG, "MRZ not found")
-                resultListener.onError(MrzInfoNotFoundMrzProcessorException)
+                mrzProcessorResultListener.onError(MrzInfoNotFoundMrzProcessorException)
             }
         } else {
             Log.i(TAG, "Text not found")
-            resultListener.onError(TextNotFoundMrzProcessorException)
+            mrzProcessorResultListener.onError(TextNotFoundMrzProcessorException)
         }
     }
 
@@ -122,7 +108,7 @@ private class MrzProcessorImpl : MrzProcessor {
 
     private fun onFailure(e: MrzProcessorException) {
         Log.i(TAG, "Text detection failed.$e")
-        resultListener.onError(e)
+        mrzProcessorResultListener.onError(e)
     }
 
     private fun finishScanning(mrzInfo: MrzInfo?) {
@@ -133,13 +119,13 @@ private class MrzProcessorImpl : MrzProcessor {
                     && dateOfExpiry.length == DATE_OF_EXPIRY_MINIMUM_LENGTH
                 if (isValidMrzInfo) {
                     isMrzDetected = true
-                    resultListener.onSuccess(this)
+                    mrzProcessorResultListener.onSuccess(this)
                 } else {
-                    resultListener.onError(InvalidMrzInfoMrzProcessorException)
+                    mrzProcessorResultListener.onError(InvalidMrzInfoMrzProcessorException)
                 }
             }
         } else {
-            resultListener.onError(InvalidMrzInfoMrzProcessorException)
+            mrzProcessorResultListener.onError(InvalidMrzInfoMrzProcessorException)
         }
     }
 }

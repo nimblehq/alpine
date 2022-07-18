@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.lib.model.nfc
+package co.nimblehq.alpine.lib.model
 
 private const val DOCUMENT_CODE_PASSPORT = "P"
 private const val DOCUMENT_CODE_ID_CARD = "I"

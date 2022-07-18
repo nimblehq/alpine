@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.lib.mrz
+package co.nimblehq.alpine.lib.model
 
 data class MrzInfo(
     val documentNumber: String,
@@ -13,14 +13,16 @@ data class MrzInfo(
             dateOfExpiry: String?
         ): MrzInfo? {
             return if (
-                documentNumber != null
-                && dateOfBirth != null
-                && dateOfExpiry != null
+                listOf(
+                    documentNumber,
+                    dateOfBirth,
+                    dateOfExpiry
+                ).all { it != null }
             ) {
                 MrzInfo(
-                    documentNumber = documentNumber,
-                    dateOfBirth = dateOfBirth,
-                    dateOfExpiry = dateOfExpiry,
+                    documentNumber = documentNumber!!,
+                    dateOfBirth = dateOfBirth!!,
+                    dateOfExpiry = dateOfExpiry!!,
                 )
             } else {
                 null

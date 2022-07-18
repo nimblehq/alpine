@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.lib.model.nfc
+package co.nimblehq.alpine.lib.model
 
 import android.graphics.Bitmap
 
