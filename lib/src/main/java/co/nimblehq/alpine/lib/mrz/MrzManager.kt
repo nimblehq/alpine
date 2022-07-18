@@ -4,7 +4,7 @@ package co.nimblehq.alpine.lib.mrz
 
 import android.graphics.BitmapFactory
 import android.util.Log
-import co.nimblehq.alpine.lib.mrz.MlKitWrapperException.*
+import co.nimblehq.alpine.lib.mrz.MrzProcessorException.*
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.*
@@ -15,16 +15,16 @@ import java.util.regex.Pattern
 interface ResultListener {
     fun onSuccess(mrzInfo: MrzInfo)
 
-    fun onError(e: MlKitWrapperException)
+    fun onError(e: MrzProcessorException)
 }
 
-sealed class MlKitWrapperException : Exception() {
-    object DefaultMlKitWrapperException : MlKitWrapperException()
-    object InvalidMrzMlKitWrapperException : MlKitWrapperException()
-    object MrzNotFoundMlKitWrapperException : MlKitWrapperException()
-    object FileNotFoundMlKitWrapperException : MlKitWrapperException()
-    object TextNotFoundMlKitWrapperException : MlKitWrapperException()
-    object TextNotRecognizedMlKitWrapperException : MlKitWrapperException()
+sealed class MrzProcessorException : Exception() {
+    object DefaultMrzProcessorException : MrzProcessorException()
+    object InvalidMrzInfoMrzProcessorException : MrzProcessorException()
+    object MrzInfoNotFoundMrzProcessorException : MrzProcessorException()
+    object FileNotFoundMrzProcessorException : MrzProcessorException()
+    object TextNotFoundMrzProcessorException : MrzProcessorException()
+    object TextNotRecognizedMrzProcessorException : MrzProcessorException()
 }
 
 interface MrzProcessor {
@@ -67,25 +67,21 @@ private class MrzProcessorImpl : MrzProcessor {
                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                 val inputImage = InputImage.fromBitmap(bitmap, IMAGE_ORIENTATION_IN_DEGREES)
                 textRecognizer.process(inputImage)
-                    .addOnSuccessListener { results ->
-                        this.onSuccess(results)
-                    }
-                    .addOnFailureListener { e ->
-                        this.onFailure(TextNotRecognizedMlKitWrapperException)
-                    }
+                    .addOnSuccessListener(::onSuccess)
+                    .addOnFailureListener { onFailure(TextNotRecognizedMrzProcessorException) }
             } else {
-                this.onFailure(FileNotFoundMlKitWrapperException)
+                this.onFailure(FileNotFoundMrzProcessorException)
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            this.onFailure(DefaultMlKitWrapperException)
+            this.onFailure(DefaultMrzProcessorException)
         }
     }
 
     private fun onSuccess(results: Text) {
         scannedTextBuffer = ""
         val blocks = results.textBlocks
-        val containsText = blocks.indices.count() > 0
+        val containsText = blocks.isNotEmpty()
         if (containsText) {
             for (i in blocks.indices) {
                 val lines = blocks[i].lines
@@ -98,11 +94,11 @@ private class MrzProcessorImpl : MrzProcessor {
             }
             if (!isMrzDetected) {
                 Log.i(TAG, "MRZ not found")
-                resultListener.onError(MrzNotFoundMlKitWrapperException)
+                resultListener.onError(MrzInfoNotFoundMrzProcessorException)
             }
         } else {
             Log.i(TAG, "Text not found")
-            resultListener.onError(TextNotFoundMlKitWrapperException)
+            resultListener.onError(TextNotFoundMrzProcessorException)
         }
     }
 
@@ -129,7 +125,7 @@ private class MrzProcessorImpl : MrzProcessor {
         }
     }
 
-    private fun onFailure(e: MlKitWrapperException) {
+    private fun onFailure(e: MrzProcessorException) {
         Log.i(TAG, "Text detection failed.$e")
         resultListener.onError(e)
     }
@@ -144,11 +140,11 @@ private class MrzProcessorImpl : MrzProcessor {
                     isMrzDetected = true
                     resultListener.onSuccess(this)
                 } else {
-                    resultListener.onError(InvalidMrzMlKitWrapperException)
+                    resultListener.onError(InvalidMrzInfoMrzProcessorException)
                 }
             }
         } else {
-            resultListener.onError(InvalidMrzMlKitWrapperException)
+            resultListener.onError(InvalidMrzInfoMrzProcessorException)
         }
     }
 }
