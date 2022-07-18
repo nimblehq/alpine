@@ -3,11 +3,10 @@ package co.nimblehq.alpine.lib.model.nfc
 private const val DOCUMENT_CODE_PASSPORT = "P"
 private const val DOCUMENT_CODE_ID_CARD = "I"
 
-enum class DocumentType(val value: String) {
-    // TODO: Use resource ID instead of hardcoded strings
-    PASSPORT("Passport"),
-    ID_CARD("ID card"),
-    OTHER("Other");
+enum class DocumentType {
+    PASSPORT,
+    ID_CARD,
+    OTHER;
 
     companion object {
         fun from(documentCode: String): DocumentType {
