@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.lib.mlkit
+package co.nimblehq.alpine.lib.mrz
 
 data class MrzInfo(
     val documentNumber: String,

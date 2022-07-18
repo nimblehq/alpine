@@ -7,7 +7,7 @@ import android.graphics.Bitmap
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
 import androidx.annotation.WorkerThread
-import co.nimblehq.alpine.lib.mlkit.MrzInfo
+import co.nimblehq.alpine.lib.mrz.MrzInfo
 import co.nimblehq.alpine.lib.model.nfc.*
 import net.sf.scuba.smartcards.CardService
 import org.jmrtd.BACKey

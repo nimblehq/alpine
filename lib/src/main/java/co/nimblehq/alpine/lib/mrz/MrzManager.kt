@@ -1,10 +1,10 @@
 @file:JvmName("MrzManager")
 
-package co.nimblehq.alpine.lib.mlkit
+package co.nimblehq.alpine.lib.mrz
 
 import android.graphics.BitmapFactory
 import android.util.Log
-import co.nimblehq.alpine.lib.mlkit.MlKitWrapperException.*
+import co.nimblehq.alpine.lib.mrz.MlKitWrapperException.*
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.*
