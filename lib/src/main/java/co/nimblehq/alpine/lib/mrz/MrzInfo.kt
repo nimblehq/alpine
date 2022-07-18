@@ -18,9 +18,9 @@ data class MrzInfo(
                 && dateOfExpiry != null
             ) {
                 MrzInfo(
-                    documentNumber,
-                    dateOfBirth,
-                    dateOfExpiry,
+                    documentNumber = documentNumber,
+                    dateOfBirth = dateOfBirth,
+                    dateOfExpiry = dateOfExpiry,
                 )
             } else {
                 null
