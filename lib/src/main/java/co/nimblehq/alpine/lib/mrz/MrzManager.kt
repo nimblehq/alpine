@@ -80,17 +80,12 @@ private class MrzProcessorImpl : MrzProcessor {
 
     private fun onSuccess(results: Text) {
         scannedTextBuffer = ""
-        val blocks = results.textBlocks
-        val containsText = blocks.isNotEmpty()
-        if (containsText) {
-            for (i in blocks.indices) {
-                val lines = blocks[i].lines
-                for (j in lines.indices) {
-                    val elements = lines[j].elements
-                    for (k in elements.indices) {
-                        filterScannedText(elements[k])
-                    }
-                }
+        val textBlocks = results.textBlocks
+        if (textBlocks.isNotEmpty()) {
+            textBlocks.flatMap { textBlock ->
+                textBlock.lines.flatMap { it.elements }
+            }.forEach {
+                filterScannedText(it)
             }
             if (!isMrzDetected) {
                 Log.i(TAG, "MRZ not found")
