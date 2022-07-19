@@ -2,12 +2,14 @@ package co.nimblehq.alpine.lib.nfc;
 
 import android.content.Context;
 import android.graphics.*;
+import android.util.Base64;
 
 import org.jmrtd.lds.AbstractImageInfo;
 import org.jnbis.WsqDecoder;
 
 import java.io.*;
 
+import co.nimblehq.alpine.lib.model.Image;
 import jj2000.j2k.decoder.Decoder;
 import jj2000.j2k.util.ParameterList;
 
@@ -28,14 +30,17 @@ import jj2000.j2k.util.ParameterList;
  */
 public class ImageUtil {
 
-    public static Bitmap getImage(Context context, AbstractImageInfo imageInfo) {
+    public static Image getImage(Context context, AbstractImageInfo imageInfo) {
         int imageLength = imageInfo.getImageLength();
         DataInputStream dataInputStream = new DataInputStream(imageInfo.getImageInputStream());
         byte[] buffer = new byte[imageLength];
         try {
             dataInputStream.readFully(buffer, 0, imageLength);
             InputStream inputStream = new ByteArrayInputStream(buffer, 0, imageLength);
-            return decodeImage(context, imageInfo.getMimeType(), inputStream);
+            return new Image(
+                decodeImage(context, imageInfo.getMimeType(), inputStream),
+                Base64.encodeToString(buffer, Base64.DEFAULT)
+            );
         } catch (IOException e) {
             e.printStackTrace();
         }

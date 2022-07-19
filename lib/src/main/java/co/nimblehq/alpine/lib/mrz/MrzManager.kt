@@ -32,7 +32,6 @@ private const val DOCUMENT_NUMBER_MINIMUM_LENGTH = 8
 private const val DATE_OF_BIRTH_MINIMUM_LENGTH = 6
 private const val DATE_OF_EXPIRY_MINIMUM_LENGTH = 6
 
-@Suppress("NestedBlockDepth")
 private class MrzProcessorImpl : MrzProcessor {
 
     private val textRecognizer: TextRecognizer by lazy {
@@ -42,7 +41,6 @@ private class MrzProcessorImpl : MrzProcessor {
     private var scannedTextBuffer: String = ""
     private var isMrzDetected: Boolean = false
 
-    @Suppress("TooGenericExceptionCaught")
     @Throws(MlKitException::class)
     override fun processImageFile(filePath: String, mrzProcessorResultListener: MrzProcessorResultListener) {
         isMrzDetected = false
@@ -83,7 +81,6 @@ private class MrzProcessorImpl : MrzProcessor {
         }
     }
 
-    @Suppress("MagicNumber")
     private fun filterScannedText(element: Text.Element) {
         scannedTextBuffer += element.text
         val patternPassportTD3Line1 = Pattern.compile(PASSPORT_TD_3_LINE_1_REGEX)

@@ -1,19 +1,19 @@
 package co.nimblehq.alpine.lib.model
 
 data class AdditionalPersonDetails(
-    var custodyInformation: String? = null,
-    var fullDateOfBirth: String? = null,
-    var nameOfHolder: String? = null,
-    var otherNames: List<String>? = null,
-    var otherValidTDNumbers: List<String>? = null,
-    var permanentAddressConstituents: List<String>? = null,
-    var personalNumber: String? = null,
-    var personalSummary: String? = null,
-    var placeOfBirthConstituents: List<String>? = null,
-    var profession: String? = null,
-    var proofOfCitizenship: ByteArray? = null,
-    var tag: Int = 0,
-    var tagPresenceList: List<Int>? = null,
-    var telephone: String? = null,
-    var title: String? = null
+    val custodyInformation: String?,
+    val fullDateOfBirth: String?,
+    val nameOfHolder: String?,
+    val otherNames: List<String>?,
+    val otherValidTDNumbers: List<String>?,
+    val permanentAddressConstituents: List<String>?,
+    val personalNumber: String?,
+    val personalSummary: String?,
+    val placeOfBirthConstituents: List<String>?,
+    val profession: String?,
+    val proofOfCitizenship: ByteArray?,
+    val tag: Int = 0,
+    val tagPresenceList: List<Int>?,
+    val telephone: String?,
+    val title: String?
 )
