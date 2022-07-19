@@ -1,5 +1,3 @@
-@file:JvmName("MrzManager")
-
 package co.nimblehq.alpine.lib.mrz
 
 import android.graphics.BitmapFactory
@@ -13,26 +11,19 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.io.File
 import java.util.regex.Pattern
 
-interface MrzProcessor {
-    fun processImageFile(filePath: String, mrzProcessorResultListener: MrzProcessorResultListener)
+internal class MrzProcessorImpl : MrzProcessor {
 
     companion object {
-        @JvmStatic
-        fun newInstance(): MrzProcessor = MrzProcessorImpl()
+        private const val TAG = "MlKitWrapper"
+        private const val PASSPORT_TD_3_LINE_1_REGEX = "(P[A-Z0-9<]{1})([A-Z]{3})([A-Z0-9<]{39})"
+        private const val PASSPORT_TD_3_LINE_2_REGEX =
+            "([A-Z0-9<]{9})([0-9]{1})([A-Z]{3})([0-9]{6})([0-9]{1})" +
+                "([M|F|X|<]{1})([0-9]{6})([0-9]{1})([A-Z0-9<]{14})([0-9]{1})([0-9]{1})"
+        private const val IMAGE_ORIENTATION_IN_DEGREES = 90
+        private const val DOCUMENT_NUMBER_MINIMUM_LENGTH = 8
+        private const val DATE_OF_BIRTH_MINIMUM_LENGTH = 6
+        private const val DATE_OF_EXPIRY_MINIMUM_LENGTH = 6
     }
-}
-
-private const val TAG = "MlKitWrapper"
-private const val PASSPORT_TD_3_LINE_1_REGEX = "(P[A-Z0-9<]{1})([A-Z]{3})([A-Z0-9<]{39})"
-private const val PASSPORT_TD_3_LINE_2_REGEX =
-    "([A-Z0-9<]{9})([0-9]{1})([A-Z]{3})([0-9]{6})([0-9]{1})" +
-        "([M|F|X|<]{1})([0-9]{6})([0-9]{1})([A-Z0-9<]{14})([0-9]{1})([0-9]{1})"
-private const val IMAGE_ORIENTATION_IN_DEGREES = 90
-private const val DOCUMENT_NUMBER_MINIMUM_LENGTH = 8
-private const val DATE_OF_BIRTH_MINIMUM_LENGTH = 6
-private const val DATE_OF_EXPIRY_MINIMUM_LENGTH = 6
-
-private class MrzProcessorImpl : MrzProcessor {
 
     private val textRecognizer: TextRecognizer by lazy {
         TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)

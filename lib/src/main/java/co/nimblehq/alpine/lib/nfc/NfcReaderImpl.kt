@@ -1,5 +1,3 @@
-@file:JvmName("NfcManager")
-
 package co.nimblehq.alpine.lib.nfc
 
 import android.content.Context
@@ -18,19 +16,7 @@ import org.jmrtd.lds.iso19794.FaceImageInfo
 import org.jmrtd.lds.iso19794.FingerImageInfo
 import java.security.PublicKey
 
-interface NfcReader {
-    @WorkerThread
-    fun readNfc(tag: Tag, mrzInfo: MrzInfo, timeout: Int = ISO_DEP_TIMEOUT_IN_MILLIS): PassportInfo?
-
-    companion object {
-        @JvmStatic
-        fun newInstance(context: Context): NfcReader = NfcReaderImpl(context)
-    }
-}
-
-private const val ISO_DEP_TIMEOUT_IN_MILLIS = 60000
-
-private class NfcReaderImpl(private val context: Context) : NfcReader {
+internal class NfcReaderImpl(private val context: Context) : NfcReader {
 
     override fun readNfc(tag: Tag, mrzInfo: MrzInfo, timeout: Int): PassportInfo? {
         return try {
