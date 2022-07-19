@@ -1,20 +1,13 @@
 package co.nimblehq.alpine.lib.model
 
-private const val DOCUMENT_CODE_PASSPORT = "P"
-private const val DOCUMENT_CODE_ID_CARD = "I"
-
-enum class DocumentType {
-    PASSPORT,
-    ID_CARD,
-    OTHER;
+enum class DocumentType(private val documentCode: String?) {
+    PASSPORT("P"),
+    ID_CARD("I"),
+    OTHER(null);
 
     companion object {
-        fun from(documentCode: String): DocumentType {
-            return when (documentCode) {
-                DOCUMENT_CODE_PASSPORT -> PASSPORT
-                DOCUMENT_CODE_ID_CARD -> ID_CARD
-                else -> OTHER
-            }
+        internal fun from(documentCode: String?): DocumentType {
+            return values().find { it.documentCode.equals(documentCode, true) } ?: OTHER
         }
     }
 }
