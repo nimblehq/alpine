@@ -100,20 +100,16 @@ internal class MrzProcessorImpl : MrzProcessor {
     }
 
     private fun finishScanning(mrzInfo: MrzInfo?) {
-        if (mrzInfo != null) {
-            with(mrzInfo) {
-                val isValidMrzInfo = documentNumber.length >= DOCUMENT_NUMBER_MINIMUM_LENGTH
-                    && dateOfBirth.length == DATE_OF_BIRTH_MINIMUM_LENGTH
-                    && dateOfExpiry.length == DATE_OF_EXPIRY_MINIMUM_LENGTH
-                if (isValidMrzInfo) {
-                    isMrzDetected = true
-                    mrzProcessorResultListener.onSuccess(this)
-                } else {
-                    mrzProcessorResultListener.onError(InvalidMrzInfoMrzProcessorException)
-                }
+        mrzInfo?.run {
+            val isValidMrzInfo = documentNumber.length >= DOCUMENT_NUMBER_MINIMUM_LENGTH
+                && dateOfBirth.length == DATE_OF_BIRTH_MINIMUM_LENGTH
+                && dateOfExpiry.length == DATE_OF_EXPIRY_MINIMUM_LENGTH
+            if (isValidMrzInfo) {
+                isMrzDetected = true
+                mrzProcessorResultListener.onSuccess(this)
+            } else {
+                mrzProcessorResultListener.onError(InvalidMrzInfoMrzProcessorException)
             }
-        } else {
-            mrzProcessorResultListener.onError(InvalidMrzInfoMrzProcessorException)
-        }
+        } ?: mrzProcessorResultListener.onError(InvalidMrzInfoMrzProcessorException)
     }
 }
