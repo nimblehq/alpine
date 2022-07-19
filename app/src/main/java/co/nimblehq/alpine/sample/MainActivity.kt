@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity(), View.OnClickListener {
         AlertDialog.Builder(this)
             .setMessage(getString(R.string.rationale_permission_camera))
             .setPositiveButton(R.string.ok) { _, _ -> navigateToSettings() }
-            .setNegativeButton(R.string.no, null)
+            .setNegativeButton(R.string.no_thanks, null)
             .show()
     }
 

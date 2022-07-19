@@ -3,6 +3,6 @@
     <string name="main_start">Start scanning MRZ</string>
     <string name="rationale_permission_camera">To take the photo of the passport information page, you need to allow access to the camera.</string>
     <string name="ok">OK</string>
-    <string name="no">No, thanks</string>
+    <string name="no_thanks">No, thanks</string>
     <string name="main_enter_manually">Enter MRZ info manually</string>
 </resources>
