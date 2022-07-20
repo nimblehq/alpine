@@ -71,10 +71,9 @@ class MainActivity : ComponentActivity(), View.OnClickListener {
     }
 
     private fun navigateToSettings() {
-        val intent = Intent()
-        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-        val uri = Uri.fromParts("package", packageName, null)
-        intent.data = uri
-        startActivity(intent)
+        Intent().apply {
+            action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            data = Uri.fromParts("package", packageName, null)
+        }.let(::startActivity)
     }
 }
