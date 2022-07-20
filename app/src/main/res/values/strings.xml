@@ -5,4 +5,16 @@
     <string name="no_thanks">No, thanks</string>
     <string name="ok">OK</string>
     <string name="rationale_permission_camera">To take the photo of the passport information page, you need to allow access to the camera.</string>
+    <string name="nfc_scanning_title">Read NFC</string>
+    <string name="nfc_scanning_name">Name: %s</string>
+    <string name="nfc_scanning_surname">Surname: %s</string>
+    <string name="nfc_scanning_personal_number">Personal Number: %s</string>
+    <string name="nfc_scanning_gender">Gender: %s</string>
+    <string name="nfc_scanning_birth_date">Birth Date: %s</string>
+    <string name="nfc_scanning_expiry_date">Expiry Date: %s</string>
+    <string name="nfc_scanning_serial_number">Serial Number: %s</string>
+    <string name="nfc_scanning_nationality">Nationality: %s</string>
+    <string name="nfc_scanning_document_type">Document Type: %s</string>
+    <string name="nfc_scanning_issuer_authority">Issuer Authority: %s</string>
+    <string name="nfc_scanning_passport_image">Passport Image</string>
 </resources>
