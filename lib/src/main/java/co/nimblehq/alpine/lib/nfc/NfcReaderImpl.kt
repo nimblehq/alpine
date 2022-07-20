@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.nfc.Tag
 import android.nfc.tech.IsoDep
-import androidx.annotation.WorkerThread
 import co.nimblehq.alpine.lib.model.*
 import net.sf.scuba.smartcards.CardService
 import org.jmrtd.BACKey
@@ -95,17 +94,11 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
     }
 
     private fun getBiometrics(passportService: PassportService): Biometrics {
-        val faceImage = getFaceImage(passportService)
-        val portraitImage = getPortraitImage(passportService)
-        val signature = getSignature(passportService)
         return Biometrics(
-            faceImageBitmap = faceImage?.bitmap,
-            faceImageBase64 = faceImage?.base64,
-            fingerprints = getFingerprints(passportService),
-            portraitImageBitmap = portraitImage?.bitmap,
-            portraitImageBase64 = portraitImage?.base64,
-            signatureBitmap = signature?.bitmap,
-            signatureBase64 = signature?.base64
+            faceImage = getFaceImage(passportService),
+            portraitImage = getPortraitImage(passportService),
+            signatureImage = getSignatureImage(passportService),
+            fingerprints = getFingerprints(passportService)
         )
     }
 
@@ -162,7 +155,7 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
         }
     }
 
-    private fun getSignature(passportService: PassportService): Image? {
+    private fun getSignatureImage(passportService: PassportService): Image? {
         return try {
             val dg7InputStream = passportService.getInputStream(PassportService.EF_DG7)
             val dg7File = DG7File(dg7InputStream)

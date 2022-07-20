@@ -32,7 +32,6 @@ internal class MrzProcessorImpl : MrzProcessor {
     private var scannedTextBuffer: String = ""
     private var isMrzDetected: Boolean = false
 
-    @Throws(MlKitException::class)
     override fun processImageFile(filePath: String, mrzProcessorResultListener: MrzProcessorResultListener) {
         isMrzDetected = false
         this.mrzProcessorResultListener = mrzProcessorResultListener
