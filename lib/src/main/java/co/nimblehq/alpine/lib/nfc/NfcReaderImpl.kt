@@ -188,7 +188,7 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
                     profession = dg11File.profession,
                     proofOfCitizenship = dg11File.proofOfCitizenship,
                     tag = dg11File.tag,
-                    tagPresenceList = dg11File.tagPresenceList,
+                    tags = dg11File.tagPresenceList,
                     telephone = dg11File.telephone,
                     title = dg11File.title
                 )
