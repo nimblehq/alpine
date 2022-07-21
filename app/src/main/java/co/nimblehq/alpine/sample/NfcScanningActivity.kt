@@ -74,15 +74,11 @@ class NfcScanningActivity : ComponentActivity() {
             gPassportDetails.visibility = GONE
             pbLoading.visibility = VISIBLE
         }
-        mrzInfo
-            ?.run { readDataFromNfcChip(tag, this) }
-            ?: run { showError() }
-    }
-
-    private fun readDataFromNfcChip(tag: Tag, mrzInfo: MrzInfo) {
+        showMessage(getString(R.string.nfc_scanning_reading_data))
         lifecycleScope.launch(Dispatchers.Main) {
-            showMessage(getString(R.string.nfc_scanning_reading_data))
-            val passportInfo = withContext(Dispatchers.IO) { nfcReader.readNfc(tag, mrzInfo) }
+            val passportInfo = withContext(Dispatchers.IO) {
+                mrzInfo?.let { mrzInfo -> nfcReader.readNfc(tag, mrzInfo) }
+            }
             passportInfo?.let(::loadPassportInfo) ?: showError()
         }
     }
