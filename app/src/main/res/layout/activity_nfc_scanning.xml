@@ -10,13 +10,11 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/teal_400"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="@string/nfc_scanning_title"
-        app:titleTextColor="@color/white" />
+        app:title="@string/nfc_scanning_title" />
 
     <ProgressBar
-        android:id="@+id/prgLoading"
+        android:id="@+id/pbLoading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -28,22 +26,79 @@
         android:id="@+id/ivPassportImage"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_large"
+        android:layout_marginHorizontal="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_large"
         android:contentDescription="@string/nfc_scanning_passport_image"
         android:src="@drawable/ic_launcher_background"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/ivFingerprintImage"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <TextView
+        android:id="@+id/tvPassportImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:text="@string/nfc_scanning_passport_image"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="@id/ivPassportImage"
+        app:layout_constraintStart_toStartOf="@id/ivPassportImage"
+        app:layout_constraintTop_toBottomOf="@id/ivPassportImage" />
+
+    <ImageView
+        android:id="@+id/ivFingerprintImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_large"
+        android:contentDescription="@string/nfc_scanning_fingerprint_image"
+        android:src="@drawable/ic_launcher_background"
+        app:layout_constraintEnd_toStartOf="@id/ivSignatureImage"
+        app:layout_constraintStart_toEndOf="@id/ivPassportImage"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <TextView
+        android:id="@+id/tvFingerprintImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:text="@string/nfc_scanning_fingerprint_image"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="@id/ivFingerprintImage"
+        app:layout_constraintStart_toStartOf="@id/ivFingerprintImage"
+        app:layout_constraintTop_toBottomOf="@id/ivFingerprintImage" />
+
+    <ImageView
+        android:id="@+id/ivSignatureImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_large"
+        android:contentDescription="@string/nfc_scanning_signature_image"
+        android:src="@drawable/ic_launcher_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivFingerprintImage"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
+    <TextView
+        android:id="@+id/tvSignatureImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
+        android:text="@string/nfc_scanning_signature_image"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="@id/ivSignatureImage"
+        app:layout_constraintStart_toStartOf="@id/ivSignatureImage"
+        app:layout_constraintTop_toBottomOf="@id/ivSignatureImage" />
 
     <LinearLayout
         android:id="@+id/llPassportDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="@dimen/margin_large"
         android:gravity="center"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/ivPassportImage">
+        app:layout_constraintTop_toBottomOf="@id/tvPassportImage">
 
         <TextView
             android:id="@+id/tvName"
@@ -91,7 +146,7 @@
             android:id="@+id/tvSerialNumber"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/nfc_scanning_serial_number"
+            android:text="@string/nfc_scanning_passport_number"
             android:textSize="@dimen/text_normal" />
 
         <TextView
@@ -117,10 +172,28 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.Group
+        android:id="@+id/gPassportImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="ivPassportImage, tvPassportImage" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/gFingerprintImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="ivFingerprintImage, tvFingerprintImage" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/gSignatureImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="ivSignatureImage, tvSignatureImage" />
+
+    <androidx.constraintlayout.widget.Group
         android:id="@+id/gPassportDetails"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="ivPassportImage, llPassportDetails" />
+        app:constraint_referenced_ids="gPassportImage, gFingerprintImage, gSignatureImage, llPassportDetails" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

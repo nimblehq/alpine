@@ -2,12 +2,13 @@ package co.nimblehq.alpine.sample.nfc
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import co.nimblehq.alpine.R
+import co.nimblehq.alpine.databinding.ActivityNfcScanningBinding
 
 class NfcScanningActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_nfc_scanning)
+        val binding = ActivityNfcScanningBinding.inflate(layoutInflater)
+        setContentView(binding.root)
     }
 }
