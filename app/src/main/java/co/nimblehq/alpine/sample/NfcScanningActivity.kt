@@ -1,6 +1,7 @@
 package co.nimblehq.alpine.sample
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.PendingIntent
 import android.content.*
 import android.nfc.*
@@ -82,18 +83,16 @@ class NfcScanningActivity : ComponentActivity() {
         lifecycleScope.launch(Dispatchers.Main) {
             showMessage(getString(R.string.nfc_scanning_reading_data))
             val passportInfo = withContext(Dispatchers.IO) { nfcReader.readNfc(tag, mrzInfo) }
-            if (passportInfo == null) {
-                showError()
-            } else {
-                loadPassportInfo(passportInfo)
-            }
+            passportInfo?.let(::loadPassportInfo) ?: showError()
         }
     }
 
     private fun showError() {
-        binding.gPassportDetails.visibility = GONE
-        binding.pbLoading.visibility = GONE
-        binding.tvInstruction.visibility = VISIBLE
+        with(binding) {
+            gPassportDetails.visibility = GONE
+            pbLoading.visibility = GONE
+            tvInstruction.visibility = VISIBLE
+        }
         showMessage(getString(R.string.error_generic))
     }
 
@@ -138,9 +137,9 @@ class NfcScanningActivity : ComponentActivity() {
         private const val ARG_MRZ = "ARG_MRZ"
         private const val NFC_TECH_ISO_DEP = "android.nfc.tech.IsoDep"
 
-        fun start(context: Context, mrzInfo: MrzInfo) {
-            context.startActivity(
-                Intent(context, NfcScanningActivity::class.java)
+        fun start(activity: Activity, mrzInfo: MrzInfo) {
+            activity.startActivity(
+                Intent(activity, NfcScanningActivity::class.java)
                     .putExtra(ARG_MRZ, mrzInfo)
             )
         }
