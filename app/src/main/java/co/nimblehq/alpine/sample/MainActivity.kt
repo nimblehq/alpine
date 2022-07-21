@@ -58,8 +58,7 @@ class MainActivity : ComponentActivity(), View.OnClickListener {
     }
 
     private fun navigateToCamera() {
-        // TODO: navigate to the camera screen.
-        Toast.makeText(this, "Not implemented yet :(", Toast.LENGTH_SHORT).show()
+        CameraCaptureActivity.start(this)
     }
 
     private fun showRationale() {
