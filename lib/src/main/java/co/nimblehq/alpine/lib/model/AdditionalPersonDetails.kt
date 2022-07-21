@@ -1,5 +1,9 @@
 package co.nimblehq.alpine.lib.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class AdditionalPersonDetails(
     val custodyInformation: String?,
     val fullDateOfBirth: String?,
@@ -16,4 +20,4 @@ data class AdditionalPersonDetails(
     val tags: List<Int>?,
     val telephone: String?,
     val title: String?
-)
+) : Parcelable

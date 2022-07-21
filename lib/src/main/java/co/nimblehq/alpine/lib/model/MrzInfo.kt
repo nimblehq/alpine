@@ -1,10 +1,14 @@
 package co.nimblehq.alpine.lib.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class MrzInfo(
     val documentNumber: String,
     val dateOfBirth: String,
     val dateOfExpiry: String
-) {
+) : Parcelable {
 
     companion object {
         fun createFrom(
