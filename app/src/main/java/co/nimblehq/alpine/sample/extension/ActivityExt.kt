@@ -12,14 +12,14 @@ fun Activity.setLightStatusBar() {
 }
 
 fun Activity.setWindowFlag(bits: Int, on: Boolean) {
-    window?.let { win ->
-        val winParams = win.attributes
+    window?.run {
+        val winParams = attributes
         if (on) {
             winParams.flags = winParams.flags or bits
         } else {
             winParams.flags = winParams.flags and bits.inv()
         }
-        win.attributes = winParams
+        attributes = winParams
     }
 }
 

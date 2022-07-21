@@ -30,7 +30,8 @@
             tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".sample.CameraCaptureActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
     </application>
 
 </manifest>

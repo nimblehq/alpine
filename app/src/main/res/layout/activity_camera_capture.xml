@@ -6,7 +6,7 @@
     android:background="@color/black">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/viewCameraTopBar"
+        android:id="@+id/clCameraTopBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/black"
@@ -25,17 +25,6 @@
             app:srcCompat="@drawable/ic_toolbar_back"
             app:tint="@color/white" />
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/ivTopBarRight"
-            android:layout_width="@dimen/medium_icon_size"
-            android:layout_height="@dimen/medium_icon_size"
-            android:layout_margin="@dimen/medium_spacing"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_information"
-            app:tint="@color/white" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.camera.view.PreviewView
@@ -46,7 +35,7 @@
         app:layout_constraintBottom_toTopOf="@id/ibCameraCapture"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewCameraTopBar" />
+        app:layout_constraintTop_toBottomOf="@id/clCameraTopBar" />
 
     <View
         android:layout_width="0dp"
@@ -93,10 +82,10 @@
         android:gravity="center"
         android:text="@string/camera_capture_instruction"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="@dimen/regular_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/viewCameraTopBar" />
+        app:layout_constraintTop_toBottomOf="@id/clCameraTopBar" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/ivCameraCaptureOverlay"
@@ -111,7 +100,6 @@
         app:layout_constraintStart_toStartOf="@id/pvCameraCaptureViewFinder"
         app:layout_constraintTop_toTopOf="@id/pvCameraCaptureViewFinder"
         app:srcCompat="@drawable/ic_camera_face_frame_square" />
-
 
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/ibCameraCapture"

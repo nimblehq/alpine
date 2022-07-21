@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Spacing -->
     <dimen name="medium_spacing">16dp</dimen>
     <dimen name="medium_x_spacing">24dp</dimen>
     <dimen name="huge_spacing">60dp</dimen>
 
+    <!-- Icon size -->
     <dimen name="medium_icon_size">24dp</dimen>
+
+    <!-- Font size -->
+    <dimen name="regular_text_size">16sp</dimen>
     <dimen name="margin_small">8dp</dimen>
     <dimen name="margin_large">32dp</dimen>
     <dimen name="text_normal">16sp</dimen>
