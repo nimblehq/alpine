@@ -2,7 +2,6 @@ package co.nimblehq.alpine.sample
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -10,14 +9,11 @@ import androidx.activity.ComponentActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.lifecycleScope
 import co.nimblehq.alpine.R
 import co.nimblehq.alpine.databinding.ActivityCameraCaptureBinding
 import co.nimblehq.alpine.lib.model.MrzInfo
 import co.nimblehq.alpine.lib.mrz.*
 import co.nimblehq.alpine.sample.extension.*
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,9 +27,6 @@ class CameraCaptureActivity : ComponentActivity() {
     }
     private val loadingDialog by lazy {
         createLoadingDialog()
-    }
-    private val photoCaptured: MutableStateFlow<File?> by lazy {
-        MutableStateFlow(null)
     }
     private val mrzProcessor: MrzProcessor by lazy {
         MrzProcessor.newInstance()
@@ -115,7 +108,6 @@ class CameraCaptureActivity : ComponentActivity() {
     }
 
     private fun bindViewEvents() {
-        observePhotoCapture()
         binding.ibCameraCapture.setOnClickListener {
             loadingDialog.show()
             imageCapture?.let {
@@ -133,21 +125,10 @@ class CameraCaptureActivity : ComponentActivity() {
                         }
 
                         override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                            photoCaptured.value = photoFile
+                            processImage(photoFile)
                         }
                     })
             }
-        }
-    }
-
-    private fun observePhotoCapture() {
-        lifecycleScope.launch {
-            photoCaptured
-                .collect { file ->
-                    file?.let {
-                        processImage(it)
-                    }
-                }
         }
     }
 
