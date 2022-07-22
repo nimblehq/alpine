@@ -22,6 +22,5 @@
     <string name="nfc_scanning_fingerprint_image">Fingerprint Image</string>
     <string name="nfc_scanning_signature_image">Signature Image</string>
     <string name="nfc_scanning_instruction">Tap and hold your device on your passport</string>
-    <string name="error_generic">Something went wrong</string>
-    <string name="nfc_scanning_reading_data">Reading NFC data...</string>
+    <string name="nfc_scanning_reading_data">Reading NFC data…</string>
 </resources>
