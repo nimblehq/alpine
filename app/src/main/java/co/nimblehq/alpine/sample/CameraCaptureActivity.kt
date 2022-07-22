@@ -155,8 +155,7 @@ class CameraCaptureActivity : ComponentActivity() {
             message = getString(R.string.camera_capture_error_message),
             negativeButtonTitle = getString(R.string.camera_capture_enter_manually),
             negativeCallback = {
-                // TODO: navigate to the manual MRZ info screen.
-                Toast.makeText(this, "Not implemented yet :(", Toast.LENGTH_SHORT).show()
+                MrzInfoActivity.start(this)
             }
         )
     }
