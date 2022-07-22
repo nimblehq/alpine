@@ -27,24 +27,24 @@ class MrzInfoActivity : ComponentActivity() {
     }
 
     private fun setupView() {
-        enabledButtonNext()
+        updateNextButtonState()
     }
 
     private fun bindViewEvent() {
         with(binding) {
             tilPassportNumber.editText?.doAfterTextChanged {
                 passportNumber = it.toString()
-                enabledButtonNext()
+                updateNextButtonState()
             }
 
             tilDateOfBirth.editText?.doAfterTextChanged {
                 dateOfBirth = it.toString()
-                enabledButtonNext()
+                updateNextButtonState()
             }
 
             tilDateOfExpiry.editText?.doAfterTextChanged {
                 dateOfExpiry = it.toString()
-                enabledButtonNext()
+                updateNextButtonState()
             }
 
             btNext.setOnClickListener {
@@ -58,13 +58,13 @@ class MrzInfoActivity : ComponentActivity() {
         }
     }
 
-    private fun enabledButtonNext() {
-        val shouldEnabledNextButton = listOf(
+    private fun updateNextButtonState() {
+        val shouldEnableNextButton = listOf(
             passportNumber,
             dateOfBirth,
             dateOfExpiry
         ).all { it.isNotEmpty() }
-        binding.btNext.isEnabled = shouldEnabledNextButton
+        binding.btNext.isEnabled = shouldEnableNextButton
     }
 
     private fun navigateToNfcScanningScreen(mrzInfo: MrzInfo) {
