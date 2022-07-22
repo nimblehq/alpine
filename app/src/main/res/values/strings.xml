@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">alpine</string>
     <string name="camera_capture_instruction">Scan passport photo page</string>
+    <string name="camera_capture_error_message">Processing failed. Try again with the MRZ section of the passport clearly visible.</string>
+    <string name="camera_capture_enter_manually">Enter manually</string>
     <string name="error_generic">Something went wrong. Please try again later.</string>
     <string name="main_enter_manually">Enter MRZ info manually</string>
     <string name="main_start">Start scanning MRZ</string>

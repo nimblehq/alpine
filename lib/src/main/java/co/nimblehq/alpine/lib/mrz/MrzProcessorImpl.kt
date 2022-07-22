@@ -59,7 +59,7 @@ internal class MrzProcessorImpl : MrzProcessor {
             textBlocks.flatMap { textBlock ->
                 textBlock.lines.flatMap { it.elements }
             }.forEach {
-                filterScannedText(it)
+                if (!isMrzDetected) filterScannedText(it) else return@forEach
             }
             if (!isMrzDetected) {
                 Log.i(TAG, "MRZ not found")
