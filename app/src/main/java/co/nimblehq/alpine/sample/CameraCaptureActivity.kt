@@ -143,9 +143,6 @@ class CameraCaptureActivity : ComponentActivity() {
     private fun observePhotoCapture() {
         lifecycleScope.launch {
             photoCaptured
-                .catch {
-                    showErrorMessage()
-                }
                 .collect { file ->
                     file?.let {
                         processImage(it)
