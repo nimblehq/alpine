@@ -162,13 +162,7 @@ class CameraCaptureActivity : ComponentActivity() {
         mrzProcessor.processImageFile(photoFile.absolutePath, object : MrzProcessorResultListener {
             override fun onSuccess(mrzInfo: MrzInfo) {
                 loadingDialog.dismiss()
-                Snackbar.make(
-                    binding.root,
-                    "Date of birth: ${mrzInfo.dateOfBirth}\n" +
-                            "Date of expired: ${mrzInfo.dateOfExpiry}\n" +
-                            "Document number: ${mrzInfo.documentNumber}",
-                    Snackbar.LENGTH_SHORT
-                ).setTextMaxLines(Int.MAX_VALUE).show()
+                NfcScanningActivity.start(this@CameraCaptureActivity, mrzInfo)
             }
 
             override fun onError(e: MrzProcessorException) {
