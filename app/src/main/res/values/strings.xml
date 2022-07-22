@@ -7,6 +7,12 @@
     <string name="no_thanks">No, thanks</string>
     <string name="ok">OK</string>
     <string name="rationale_permission_camera">To take the photo of the passport information page, you need to allow access to the camera.</string>
+    <string name="action_next_button">Next</string>
+
+    <string name="mrz_info_passport_number_hint">Passport Number</string>
+    <string name="mrz_info_date_of_birth_hint">Date of Birth</string>
+    <string name="mrz_info_date_of_expiry_hint">Date of Expiry</string>
+
     <string name="nfc_scanning_title">Read NFC</string>
     <string name="nfc_scanning_name">Name: %s</string>
     <string name="nfc_scanning_surname">Surname: %s</string>

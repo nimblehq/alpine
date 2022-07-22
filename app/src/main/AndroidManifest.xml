@@ -16,6 +16,11 @@
         android:theme="@style/Theme.Alpine"
         tools:targetApi="31">
         <activity
+            android:name=".sample.MrzInfoActivity"
+            android:screenOrientation="portrait"
+            android:exported="false"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
             android:name=".sample.MainActivity"
             android:exported="true">
             <intent-filter>
