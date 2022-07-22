@@ -170,7 +170,14 @@ class CameraCaptureActivity : ComponentActivity() {
     }
 
     private fun showErrorMessage() {
-        Toast.makeText(this, getString(R.string.error_generic), Toast.LENGTH_SHORT).show()
+        displayAlertDialog(
+            message = getString(R.string.camera_capture_error_message),
+            negativeButtonTitle = getString(R.string.camera_capture_enter_manually),
+            negativeCallback = {
+                // TODO: navigate to the manual MRZ info screen.
+                Toast.makeText(this, "Not implemented yet :(", Toast.LENGTH_SHORT).show()
+            }
+        )
     }
 
     private fun createFile(
