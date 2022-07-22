@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.sample.nfc
+package co.nimblehq.alpine.sample
 
 import android.app.Activity
 import android.content.Intent
@@ -24,11 +24,11 @@ class MrzInfoActivity : ComponentActivity() {
 
             // TODO: Update on Integrate ticket.
             val shouldEnabledNextButton = listOf(
-                passportNumber,
-                dateOfBirth,
-                dateOfExpiry
+                tilPassportNumber,
+                tilDateOfBirth,
+                tilDateOfExpiry
             ).all { !it.editText?.text.isNullOrEmpty() }
-            nextButton.isEnabled = shouldEnabledNextButton
+            btNext.isEnabled = shouldEnabledNextButton
         }
     }
 

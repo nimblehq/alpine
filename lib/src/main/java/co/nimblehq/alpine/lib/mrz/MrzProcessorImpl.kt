@@ -4,6 +4,7 @@ import android.graphics.BitmapFactory
 import android.util.Log
 import co.nimblehq.alpine.lib.model.MrzInfo
 import co.nimblehq.alpine.lib.mrz.MrzProcessorException.*
+import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.*
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions

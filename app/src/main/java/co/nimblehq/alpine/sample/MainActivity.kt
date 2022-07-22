@@ -13,7 +13,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat.checkSelfPermission
 import co.nimblehq.alpine.R
-import co.nimblehq.alpine.sample.nfc.MrzInfoActivity
 
 class MainActivity : ComponentActivity(), View.OnClickListener {
 
