@@ -56,7 +56,6 @@ fun Activity.notifyOnNewPhotoAdded(savedUri: Uri) {
             Intent(ACTION_NEW_PICTURE, savedUri)
         )
     }
-
     val mimeType = MimeTypeMap.getSingleton()
         .getMimeTypeFromExtension(savedUri.toFile().extension)
     MediaScannerConnection.scanFile(

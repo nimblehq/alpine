@@ -16,6 +16,7 @@ import co.nimblehq.alpine.databinding.ActivityCameraCaptureBinding
 import co.nimblehq.alpine.lib.model.MrzInfo
 import co.nimblehq.alpine.lib.mrz.*
 import co.nimblehq.alpine.sample.extension.*
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -29,6 +30,9 @@ class CameraCaptureActivity : ComponentActivity() {
 
     private val binding: ActivityCameraCaptureBinding by lazy {
         ActivityCameraCaptureBinding.inflate(layoutInflater)
+    }
+    private val loadingDialog by lazy {
+        createLoadingDialog()
     }
     private val photoCaptured: MutableStateFlow<File?> by lazy {
         MutableStateFlow(null)
@@ -115,6 +119,7 @@ class CameraCaptureActivity : ComponentActivity() {
 
     private fun updateCameraUi() {
         binding.ibCameraCapture.setOnClickListener {
+            loadingDialog.show()
             imageCapture?.let {
                 val photoFile = createFile(outputDirectory)
                 val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile)
@@ -147,25 +152,27 @@ class CameraCaptureActivity : ComponentActivity() {
                 }
                 .collect { file ->
                     file?.let {
-                        savePhotoUriAndNavigateBack(it)
+                        processImage(it)
                     }
                 }
         }
     }
 
-    private fun savePhotoUriAndNavigateBack(photoFile: File) {
+    private fun processImage(photoFile: File) {
         mrzProcessor.processImageFile(photoFile.absolutePath, object : MrzProcessorResultListener {
             override fun onSuccess(mrzInfo: MrzInfo) {
-                Toast.makeText(
-                    this@CameraCaptureActivity,
+                loadingDialog.dismiss()
+                Snackbar.make(
+                    binding.root,
                     "Date of birth: ${mrzInfo.dateOfBirth}\n" +
                             "Date of expired: ${mrzInfo.dateOfExpiry}\n" +
                             "Document number: ${mrzInfo.documentNumber}",
-                    Toast.LENGTH_LONG
-                ).show()
+                    Snackbar.LENGTH_SHORT
+                ).setTextMaxLines(Int.MAX_VALUE).show()
             }
 
             override fun onError(e: MrzProcessorException) {
+                loadingDialog.dismiss()
                 showErrorMessage()
                 Log.e(
                     this@CameraCaptureActivity::class.java.canonicalName,
