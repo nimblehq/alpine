@@ -8,12 +8,12 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat.checkSelfPermission
 import co.nimblehq.alpine.R
+import co.nimblehq.alpine.sample.nfc.MrzInfoActivity
 
 class MainActivity : ComponentActivity(), View.OnClickListener {
 
@@ -41,10 +41,7 @@ class MainActivity : ComponentActivity(), View.OnClickListener {
     override fun onClick(view: View) {
         when (view.id) {
             R.id.btn_main_start -> checkCameraPermissionAndNavigateToCamera()
-            R.id.btn_main_enter_manually -> {
-                // TODO: navigate to the manual MRZ info screen.
-                Toast.makeText(this, "Not implemented yet :(", Toast.LENGTH_SHORT).show()
-            }
+            R.id.btn_main_enter_manually -> navigateToMrzInfoScreen()
             else -> IllegalArgumentException("").printStackTrace()
         }
     }
@@ -59,6 +56,10 @@ class MainActivity : ComponentActivity(), View.OnClickListener {
 
     private fun navigateToCamera() {
         CameraCaptureActivity.start(this)
+    }
+
+    private fun navigateToMrzInfoScreen() {
+        MrzInfoActivity.start(this)
     }
 
     private fun showRationale() {
