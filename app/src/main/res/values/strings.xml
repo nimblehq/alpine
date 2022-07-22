@@ -12,6 +12,7 @@
     <string name="mrz_info_passport_number_hint">Passport Number</string>
     <string name="mrz_info_date_of_birth_hint">Date of Birth</string>
     <string name="mrz_info_date_of_expiry_hint">Date of Expiry</string>
+    <string name="mrz_info_placeholder_date">YYMMDD</string>
 
     <string name="nfc_scanning_title">Read NFC</string>
     <string name="nfc_scanning_name">Name: %s</string>
