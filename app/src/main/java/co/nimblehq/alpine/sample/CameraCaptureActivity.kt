@@ -16,10 +16,8 @@ import co.nimblehq.alpine.databinding.ActivityCameraCaptureBinding
 import co.nimblehq.alpine.lib.model.MrzInfo
 import co.nimblehq.alpine.lib.mrz.*
 import co.nimblehq.alpine.sample.extension.*
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -76,7 +74,7 @@ class CameraCaptureActivity : ComponentActivity() {
             }
 
             pvCameraCaptureViewFinder.post {
-                observeCapture()
+                observePhotoCapture()
                 updateCameraUi()
                 configureCamera()
             }
@@ -144,7 +142,7 @@ class CameraCaptureActivity : ComponentActivity() {
         }
     }
 
-    private fun observeCapture() {
+    private fun observePhotoCapture() {
         lifecycleScope.launch {
             photoCaptured
                 .catch {
