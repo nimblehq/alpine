@@ -3,8 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-def fileProviderName = "fileprovider"
-
 android {
     compileSdk 32
 
@@ -16,9 +14,6 @@ android {
         versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        manifestPlaceholders = [fileProvider: fileProviderName]
-        buildConfigField "String", "FILE_PROVIDER", "\"${fileProviderName}\""
     }
     buildFeatures {
         viewBinding true

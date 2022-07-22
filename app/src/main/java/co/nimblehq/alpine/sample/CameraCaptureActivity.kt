@@ -53,6 +53,7 @@ class CameraCaptureActivity : ComponentActivity() {
         setLightStatusBar()
         setContentView(binding.root)
         setupView()
+        bindViewEvents()
 
         cameraExecutor = Executors.newSingleThreadExecutor()
         outputDirectory = getMediaOutputDirectory()
@@ -74,8 +75,6 @@ class CameraCaptureActivity : ComponentActivity() {
             }
 
             pvCameraCaptureViewFinder.post {
-                observePhotoCapture()
-                updateCameraUi()
                 configureCamera()
             }
         }
@@ -115,7 +114,8 @@ class CameraCaptureActivity : ComponentActivity() {
         preview?.setSurfaceProvider(binding.pvCameraCaptureViewFinder.surfaceProvider)
     }
 
-    private fun updateCameraUi() {
+    private fun bindViewEvents() {
+        observePhotoCapture()
         binding.ibCameraCapture.setOnClickListener {
             loadingDialog.show()
             imageCapture?.let {
@@ -133,8 +133,6 @@ class CameraCaptureActivity : ComponentActivity() {
                         }
 
                         override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                            val savedUri = output.savedUri ?: Uri.fromFile(photoFile)
-                            notifyOnNewPhotoAdded(savedUri)
                             photoCaptured.value = photoFile
                         }
                     })
@@ -168,7 +166,7 @@ class CameraCaptureActivity : ComponentActivity() {
                 showErrorMessage()
                 Log.e(
                     this@CameraCaptureActivity::class.java.canonicalName,
-                    "MRZ Processor process falied >>> $e"
+                    "MRZ Processor process failed >>> $e"
                 )
             }
         })
