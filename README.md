@@ -1,10 +1,52 @@
-# *A*ndroid *L*ibrary for *P*assport *I*nformation via *N*FC *E*xtraction
+# **A**ndroid **L**ibrary for **P**assport **I**nformation via **N**FC **E**xtraction
 
-## Usage
+
+ALPINE is a library to simplify the extraction of passport information by reading data off of the NFC chip
+
+## Download
 
 Clone the repository
 
 `git clone git@github.com:nimblehq/alpine.git`
+
+## Usage
+
+### Scanning Passport MRZ
+
+MRZ reading is performed by the `MrzProcessor` by passing in a filepath and a callback to receive the result.
+
+To create an instance of `MrzProcessor`, we can call `newInstance()`
+
+```kotlin
+val mrzProcessor = MrzProcessor.newInstance()
+```
+
+To extract the MRZ from the passport, we can call `processImageFile()`
+
+```kotlin
+val imageFilePath: String = imageFile.absolutePath
+val mrzProcessorResultListener = object : MrzProcessorResultListener {
+    override fun onSuccess(mrzInfo: MrzInfo) {}
+    override fun onError(e: MrzProcessorException) {}
+}
+mrzProcessor.processImageFile(imageFilePath, mrzProcessResultL)
+```
+
+### Reading NFC
+
+NFC reading is performed by `NfcReader` by passing in a `Tag`, `MrzInfo` object and an optional `timeout`
+
+To create an instance of `NfcReader`, we can call `newInstance()`
+
+```kotlin
+val nfcReader = NfcReader.newInstance(context)
+```
+
+To read the encrypted NFC data, we can call `readNfc()`
+
+```kotlin
+val passportInfo = nfcReader.readNfc(tag, mrzInfo)
+```
 
 ## License
 
