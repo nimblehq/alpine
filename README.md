@@ -15,13 +15,13 @@ Clone the repository
 
 MRZ reading is performed by the `MrzProcessor` by passing in a filepath and a callback to receive the result.
 
-To create an instance of `MrzProcessor`, we can call `newInstance()`
+To create an instance of `MrzProcessor`, call `newInstance()`
 
 ```kotlin
 val mrzProcessor = MrzProcessor.newInstance()
 ```
 
-To extract the MRZ from the passport, we can call `processImageFile()`
+To extract the MRZ from the passport, call `processImageFile()`
 
 ```kotlin
 val imageFilePath: String = imageFile.absolutePath
@@ -36,13 +36,13 @@ mrzProcessor.processImageFile(imageFilePath, mrzProcessResultL)
 
 NFC reading is performed by `NfcReader` by passing in a `Tag`, `MrzInfo` object and an optional `timeout`
 
-To create an instance of `NfcReader`, we can call `newInstance()`
+To create an instance of `NfcReader`, call `newInstance()`
 
 ```kotlin
 val nfcReader = NfcReader.newInstance(context)
 ```
 
-To read the encrypted NFC data, we can call `readNfc()`
+To read the encrypted NFC data, call `readNfc()`, making sure to call this method *off* the main thread
 
 ```kotlin
 val passportInfo = nfcReader.readNfc(tag, mrzInfo)
