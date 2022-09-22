@@ -5,7 +5,7 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class Image(
+data class PassportImage(
     val bitmap: Bitmap?,
     val base64: String?
 ) : Parcelable
