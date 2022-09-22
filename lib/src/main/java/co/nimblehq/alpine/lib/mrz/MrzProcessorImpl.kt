@@ -2,13 +2,13 @@ package co.nimblehq.alpine.lib.mrz
 
 import android.graphics.BitmapFactory
 import android.util.Log
-import co.nimblehq.alpine.lib.model.MrzInfo
+import co.nimblehq.alpine.lib.model.*
 import co.nimblehq.alpine.lib.mrz.MrzProcessorException.*
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.*
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.io.File
-import java.util.regex.Pattern
+import java.util.regex.*
 
 internal class MrzProcessorImpl : MrzProcessor {
 
@@ -39,9 +39,7 @@ internal class MrzProcessorImpl : MrzProcessor {
             if (file.exists()) {
                 val bitmap = BitmapFactory.decodeFile(file.absolutePath)
                 val inputImage = InputImage.fromBitmap(bitmap, IMAGE_ORIENTATION_IN_DEGREES)
-                textRecognizer.process(inputImage)
-                    .addOnSuccessListener(::onSuccess)
-                    .addOnFailureListener { onFailure(TextNotRecognizedMrzProcessorException) }
+                processImage(inputImage)
             } else {
                 onFailure(FileNotFoundMrzProcessorException)
             }
@@ -49,6 +47,23 @@ internal class MrzProcessorImpl : MrzProcessor {
             e.printStackTrace()
             onFailure(DefaultMrzProcessorException)
         }
+    }
+
+    override fun processImage(cameraImage: CameraImage, mrzProcessorResultListener: MrzProcessorResultListener) {
+        this.mrzProcessorResultListener = mrzProcessorResultListener
+        cameraImage.toInputImage()?.let { processImage(it) }
+            ?: onFailure(InvalidImageMrzProcessorException)
+    }
+
+    override fun processImage(inputImage: InputImage, mrzProcessorResultListener: MrzProcessorResultListener) {
+        this.mrzProcessorResultListener = mrzProcessorResultListener
+        processImage(inputImage)
+    }
+
+    private fun processImage(inputImage: InputImage) {
+        textRecognizer.process(inputImage)
+            .addOnSuccessListener(::onSuccess)
+            .addOnFailureListener { onFailure(TextNotRecognizedMrzProcessorException) }
     }
 
     private fun onSuccess(results: Text) {
