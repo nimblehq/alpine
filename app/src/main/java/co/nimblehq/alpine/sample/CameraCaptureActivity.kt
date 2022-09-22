@@ -4,21 +4,23 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import android.util.Size
 import androidx.activity.ComponentActivity
 import androidx.camera.core.*
+import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888
+import androidx.camera.core.ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import co.nimblehq.alpine.R
 import co.nimblehq.alpine.databinding.ActivityCameraCaptureBinding
+import co.nimblehq.alpine.lib.model.CameraImage
 import co.nimblehq.alpine.lib.model.MrzInfo
 import co.nimblehq.alpine.lib.mrz.*
 import co.nimblehq.alpine.sample.extension.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import java.util.concurrent.*
 
 class CameraCaptureActivity : ComponentActivity() {
 
@@ -35,6 +37,7 @@ class CameraCaptureActivity : ComponentActivity() {
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
     private var imageCapture: ImageCapture? = null
+    private var imageAnalysis: ImageAnalysis? = null
     private var preview: Preview? = null
 
     private lateinit var outputDirectory: File
@@ -50,6 +53,11 @@ class CameraCaptureActivity : ComponentActivity() {
 
         cameraExecutor = Executors.newSingleThreadExecutor()
         outputDirectory = getMediaOutputDirectory()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cameraExecutor.shutdown()
     }
 
     private fun setupView() {
@@ -99,13 +107,48 @@ class CameraCaptureActivity : ComponentActivity() {
         imageCapture = ImageCapture.Builder()
             .setCaptureMode(ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY)
             .build()
+        imageAnalysis = getImageAnalysis()
 
         camera = cameraProvider.bindToLifecycle(
-            this, cameraSelector, preview, imageCapture
+            this, cameraSelector, preview, imageCapture, imageAnalysis
         )
         // Attach the viewFinder's surface provider to Preview use case
         preview?.setSurfaceProvider(binding.pvCameraCaptureViewFinder.surfaceProvider)
     }
+
+    private fun getImageAnalysis(): ImageAnalysis {
+        val imageAnalysis = ImageAnalysis.Builder()
+            .setOutputImageFormat(OUTPUT_IMAGE_FORMAT_YUV_420_888)
+            .setTargetResolution(Size(1280, 720))
+            .setBackpressureStrategy(STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+        imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy: ImageProxy ->
+            mrzProcessor.processImage(imageProxy.toCameraImage(), object : MrzProcessorResultListener {
+                override fun onSuccess(mrzInfo: MrzInfo) {
+                    imageProxy.close()
+                    NfcScanningActivity.start(this@CameraCaptureActivity, mrzInfo)
+                }
+
+                override fun onError(e: MrzProcessorException) = imageProxy.close()
+            })
+        }
+        return imageAnalysis
+    }
+
+    private fun ImageProxy.toCameraImage() = CameraImage(
+        width = width,
+        height = height,
+        cropRect = cropRect,
+        format = format,
+        rotationDegrees = imageInfo.rotationDegrees,
+        planes = planes.map {
+            CameraImage.Plane(
+                rowStride = it.rowStride,
+                pixelStride = it.pixelStride,
+                buffer = it.buffer
+            )
+        }
+    )
 
     private fun bindViewEvents() {
         binding.ibCameraCapture.setOnClickListener {
