@@ -29,7 +29,7 @@ val mrzProcessorResultListener = object : MrzProcessorResultListener {
     override fun onSuccess(mrzInfo: MrzInfo) {}
     override fun onError(e: MrzProcessorException) {}
 }
-mrzProcessor.processImageFile(imageFilePath, mrzProcessResultL)
+mrzProcessor.processImageFile(imageFilePath, mrzProcessorResultListener)
 ```
 
 ### Reading NFC
