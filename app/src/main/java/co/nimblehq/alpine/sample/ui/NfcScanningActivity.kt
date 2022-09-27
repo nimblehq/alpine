@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.sample
+package co.nimblehq.alpine.sample.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -12,9 +12,9 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import co.nimblehq.alpine.R
 import co.nimblehq.alpine.databinding.ActivityNfcScanningBinding
+import co.nimblehq.alpine.lib.AlpineLib
 import co.nimblehq.alpine.lib.model.MrzInfo
 import co.nimblehq.alpine.lib.model.PassportInfo
-import co.nimblehq.alpine.lib.nfc.NfcReader
 import coil.load
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.*
@@ -27,9 +27,6 @@ class NfcScanningActivity : ComponentActivity() {
     private val adapter: NfcAdapter by lazy {
         (getSystemService(Context.NFC_SERVICE) as NfcManager).defaultAdapter
     }
-    private val nfcReader: NfcReader by lazy {
-        NfcReader.newInstance(this)
-    }
     private val binding: ActivityNfcScanningBinding by lazy {
         ActivityNfcScanningBinding.inflate(layoutInflater)
     }
@@ -37,6 +34,7 @@ class NfcScanningActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        AlpineLib.initializeNfcReader(context = this)
     }
 
     override fun onResume() {
@@ -77,7 +75,7 @@ class NfcScanningActivity : ComponentActivity() {
         showMessage(getString(R.string.nfc_scanning_reading_data))
         lifecycleScope.launch(Dispatchers.Main) {
             val passportInfo = withContext(Dispatchers.IO) {
-                mrzInfo?.let { mrzInfo -> nfcReader.readNfc(tag, mrzInfo) }
+                mrzInfo?.let { mrzInfo -> AlpineLib.readNfc(tag, mrzInfo) }
             }
             passportInfo?.let(::loadPassportInfo) ?: showError()
         }

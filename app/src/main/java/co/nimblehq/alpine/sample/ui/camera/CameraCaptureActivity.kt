@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.sample
+package co.nimblehq.alpine.sample.ui.camera
 
 import android.app.Activity
 import android.content.Intent
@@ -11,12 +11,18 @@ import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888
 import androidx.camera.core.ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import co.nimblehq.alpine.R
 import co.nimblehq.alpine.databinding.ActivityCameraCaptureBinding
 import co.nimblehq.alpine.lib.model.CameraImage
 import co.nimblehq.alpine.lib.model.MrzInfo
-import co.nimblehq.alpine.lib.mrz.*
 import co.nimblehq.alpine.sample.extension.*
+import co.nimblehq.alpine.sample.ui.MrzInfoActivity
+import co.nimblehq.alpine.sample.ui.NfcScanningActivity
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,9 +36,7 @@ class CameraCaptureActivity : ComponentActivity() {
     private val loadingDialog by lazy {
         createLoadingDialog()
     }
-    private val mrzProcessor: MrzProcessor by lazy {
-        MrzProcessor.newInstance()
-    }
+    private val viewModel: CameraCaptureViewModel by provideViewModels()
 
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
@@ -50,6 +54,7 @@ class CameraCaptureActivity : ComponentActivity() {
         setContentView(binding.root)
         setupView()
         bindViewEvents()
+        bindViewModel()
 
         outputDirectory = getMediaOutputDirectory()
     }
@@ -82,6 +87,11 @@ class CameraCaptureActivity : ComponentActivity() {
                 finish()
             }
         }
+    }
+
+    private fun bindViewModel() {
+        viewModel.navigateToNfcScan bindTo ::navigateToNfcScanning
+        viewModel.onProcessImageFailed bindTo ::handleError
     }
 
     private fun configureCamera() {
@@ -126,15 +136,11 @@ class CameraCaptureActivity : ComponentActivity() {
             .setBackpressureStrategy(STRATEGY_KEEP_ONLY_LATEST)
             .build()
         imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy: ImageProxy ->
-            mrzProcessor.processImage(imageProxy.toCameraImage(), object : MrzProcessorResultListener {
-                override fun onSuccess(mrzInfo: MrzInfo) {
-                    imageAnalysis.clearAnalyzer()
-                    imageProxy.close()
-                    NfcScanningActivity.start(this@CameraCaptureActivity, mrzInfo)
-                }
-
-                override fun onError(e: MrzProcessorException) = imageProxy.close()
-            })
+            viewModel.processImage(
+                cameraImage = imageProxy.toCameraImage(),
+                imageProxy = imageProxy,
+                imageAnalysis = imageAnalysis
+            )
         }
         return imageAnalysis
     }
@@ -172,29 +178,24 @@ class CameraCaptureActivity : ComponentActivity() {
                         }
 
                         override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                            processImage(photoFile)
+                            viewModel.processImageFile(filePath = photoFile.absolutePath)
                         }
                     })
             }
         }
     }
 
-    private fun processImage(photoFile: File) {
-        mrzProcessor.processImageFile(photoFile.absolutePath, object : MrzProcessorResultListener {
-            override fun onSuccess(mrzInfo: MrzInfo) {
-                loadingDialog.dismiss()
-                NfcScanningActivity.start(this@CameraCaptureActivity, mrzInfo)
-            }
+    private fun navigateToNfcScanning(mrzInfo: MrzInfo) {
+        loadingDialog.dismiss()
+        NfcScanningActivity.start(this@CameraCaptureActivity, mrzInfo)
+    }
 
-            override fun onError(e: MrzProcessorException) {
-                loadingDialog.dismiss()
-                showErrorMessage()
-                Log.e(
-                    this@CameraCaptureActivity::class.java.canonicalName,
-                    "MRZ Processor process failed >>> $e"
-                )
-            }
-        })
+    private fun handleError(throwable: Throwable) {
+        loadingDialog.dismiss()
+        Log.e(
+            this@CameraCaptureActivity::class.java.canonicalName,
+            "MRZ Processor process failed >>> $throwable"
+        )
     }
 
     private fun showErrorMessage() {
@@ -215,6 +216,14 @@ class CameraCaptureActivity : ComponentActivity() {
         val child = SimpleDateFormat(format, Locale.getDefault())
             .format(System.currentTimeMillis()) + extension
         return File(baseFolder, child)
+    }
+
+    private inline infix fun <T> Flow<T>.bindTo(crossinline action: (T) -> Unit) {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                collect { action(it) }
+            }
+        }
     }
 
     companion object {

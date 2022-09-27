@@ -17,12 +17,12 @@
         android:theme="@style/Theme.Alpine"
         tools:targetApi="31">
         <activity
-            android:name=".sample.MrzInfoActivity"
+            android:name=".sample.ui.MrzInfoActivity"
             android:screenOrientation="portrait"
             android:exported="false"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".sample.MainActivity"
+            android:name=".sample.ui.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,11 +31,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".sample.NfcScanningActivity"
+            android:name=".sample.ui.NfcScanningActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
         <activity
-            android:name=".sample.CameraCaptureActivity"
+            android:name=".sample.ui.camera.CameraCaptureActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
     </application>

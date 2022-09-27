@@ -15,7 +15,13 @@ import org.jmrtd.lds.iso19794.FaceImageInfo
 import org.jmrtd.lds.iso19794.FingerImageInfo
 import java.security.PublicKey
 
-internal class NfcReaderImpl(private val context: Context) : NfcReader {
+internal class NfcReaderImpl : NfcReader {
+
+    private lateinit var context: Context
+
+    override fun initialize(context: Context) {
+        this.context = context
+    }
 
     override fun readNfc(tag: Tag, mrzInfo: MrzInfo, timeout: Int): PassportInfo? {
         return try {

@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.sample
+package co.nimblehq.alpine.sample.ui
 
 import android.Manifest.permission.CAMERA
 import android.content.Intent
@@ -13,6 +13,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat.checkSelfPermission
 import co.nimblehq.alpine.R
+import co.nimblehq.alpine.sample.ui.camera.CameraCaptureActivity
 
 class MainActivity : ComponentActivity(), View.OnClickListener {
 
