@@ -2,9 +2,10 @@ package co.nimblehq.alpine.lib.mrz
 
 import android.graphics.BitmapFactory
 import android.util.Log
-import co.nimblehq.alpine.lib.model.*
-import co.nimblehq.alpine.lib.mrz.MrzProcessorException.*
 import co.nimblehq.alpine.lib.extension.toInputImage
+import co.nimblehq.alpine.lib.model.CameraImage
+import co.nimblehq.alpine.lib.model.MrzInfo
+import co.nimblehq.alpine.lib.mrz.MrzProcessorException.*
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.*
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -30,10 +31,11 @@ internal class MrzProcessorImpl : MrzProcessor {
     }
     private lateinit var mrzProcessorResultListener: MrzProcessorResultListener
     private var scannedTextBuffer: String = ""
-    private var isMrzDetected: Boolean = false
 
-    override fun processImageFile(filePath: String, mrzProcessorResultListener: MrzProcessorResultListener) {
-        isMrzDetected = false
+    override fun processImageFile(
+        filePath: String,
+        mrzProcessorResultListener: MrzProcessorResultListener
+    ) {
         this.mrzProcessorResultListener = mrzProcessorResultListener
         try {
             val file = File(filePath)
@@ -50,33 +52,43 @@ internal class MrzProcessorImpl : MrzProcessor {
         }
     }
 
-    override fun processImage(cameraImage: CameraImage, mrzProcessorResultListener: MrzProcessorResultListener) {
+    override fun processImage(
+        cameraImage: CameraImage,
+        mrzProcessorResultListener: MrzProcessorResultListener
+    ) {
         this.mrzProcessorResultListener = mrzProcessorResultListener
-        cameraImage.toInputImage()?.let { processImage(it) }
+        cameraImage.toInputImage()
+            ?.let {
+                Log.d(TAG, "processImage: converted to input image")
+                processImage(it)
+            }
             ?: onFailure(InvalidImageMrzProcessorException)
     }
 
-    override fun processImage(inputImage: InputImage, mrzProcessorResultListener: MrzProcessorResultListener) {
+    override fun processImage(
+        inputImage: InputImage,
+        mrzProcessorResultListener: MrzProcessorResultListener
+    ) {
         this.mrzProcessorResultListener = mrzProcessorResultListener
         processImage(inputImage)
     }
 
     private fun processImage(inputImage: InputImage) {
+        Log.d(TAG, "processImage: start processing input image")
         textRecognizer.process(inputImage)
             .addOnSuccessListener(::onSuccess)
             .addOnFailureListener { onFailure(TextNotRecognizedMrzProcessorException) }
     }
 
     private fun onSuccess(results: Text) {
+        Log.d(TAG, "onSuccess: start onsuccess")
         scannedTextBuffer = ""
         val textBlocks = results.textBlocks
         if (textBlocks.isNotEmpty()) {
-            textBlocks.flatMap { textBlock ->
-                textBlock.lines.flatMap { it.elements }
-            }.forEach {
-                if (!isMrzDetected) filterScannedText(it) else return@forEach
-            }
-            if (!isMrzDetected) {
+            val mrzInfo = getMrzInfo(textBlocks)
+            if (mrzInfo != null) {
+                finishScanning(mrzInfo)
+            } else {
                 Log.i(TAG, "MRZ not found")
                 mrzProcessorResultListener.onError(MrzInfoNotFoundMrzProcessorException)
             }
@@ -86,13 +98,23 @@ internal class MrzProcessorImpl : MrzProcessor {
         }
     }
 
-    private fun filterScannedText(element: Text.Element) {
+    private fun getMrzInfo(textBlocks: List<Text.TextBlock>): MrzInfo? {
+        var mrzInfo: MrzInfo? = null
+        textBlocks.flatMap { textBlock ->
+            textBlock.lines.flatMap { it.elements }
+        }.forEach {
+            if (mrzInfo == null) mrzInfo = filterScannedText(it)
+        }
+        return mrzInfo
+    }
+
+    private fun filterScannedText(element: Text.Element): MrzInfo? {
         scannedTextBuffer += element.text
         val patternPassportTD3Line1 = Pattern.compile(PASSPORT_TD_3_LINE_1_REGEX)
         val matcherPassportTD3Line1 = patternPassportTD3Line1.matcher(scannedTextBuffer)
         val patternPassportTD3Line2 = Pattern.compile(PASSPORT_TD_3_LINE_2_REGEX)
         val matcherPassportTD3Line2 = patternPassportTD3Line2.matcher(scannedTextBuffer)
-        if (matcherPassportTD3Line1.find() && matcherPassportTD3Line2.find()) {
+        return if (matcherPassportTD3Line1.find() && matcherPassportTD3Line2.find()) {
             val line2 = matcherPassportTD3Line2.group(0)
             var documentNumber = line2?.substring(0, 9)
             documentNumber = documentNumber?.replace("O", "0")
@@ -103,9 +125,8 @@ internal class MrzProcessorImpl : MrzProcessor {
                 "Scanned Text Buffer Passport ->>>> Doc Number: $documentNumber " +
                     "DateOfBirth: $dateOfBirth ExpiryDate: $dateOfExpiry"
             )
-            val mrzInfo = MrzInfo.createFrom(documentNumber, dateOfBirth, dateOfExpiry)
-            finishScanning(mrzInfo)
-        }
+            MrzInfo.createFrom(documentNumber, dateOfBirth, dateOfExpiry)
+        } else null
     }
 
     private fun onFailure(e: MrzProcessorException) {
@@ -113,17 +134,16 @@ internal class MrzProcessorImpl : MrzProcessor {
         mrzProcessorResultListener.onError(e)
     }
 
-    private fun finishScanning(mrzInfo: MrzInfo?) {
-        mrzInfo?.run {
+    private fun finishScanning(mrzInfo: MrzInfo) {
+        mrzInfo.run {
             val isValidMrzInfo = documentNumber.length >= DOCUMENT_NUMBER_MINIMUM_LENGTH
                 && dateOfBirth.length == DATE_OF_BIRTH_MINIMUM_LENGTH
                 && dateOfExpiry.length == DATE_OF_EXPIRY_MINIMUM_LENGTH
             if (isValidMrzInfo) {
-                isMrzDetected = true
                 mrzProcessorResultListener.onSuccess(this)
             } else {
                 mrzProcessorResultListener.onError(InvalidMrzInfoMrzProcessorException)
             }
-        } ?: mrzProcessorResultListener.onError(InvalidMrzInfoMrzProcessorException)
+        }
     }
 }
