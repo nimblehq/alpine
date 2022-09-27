@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.lib.util
+package co.nimblehq.alpine.lib.extension
 
 import android.graphics.*
 import co.nimblehq.alpine.lib.model.CameraImage
