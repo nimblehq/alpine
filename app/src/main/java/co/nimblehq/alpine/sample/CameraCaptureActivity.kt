@@ -51,12 +51,19 @@ class CameraCaptureActivity : ComponentActivity() {
         setupView()
         bindViewEvents()
 
-        cameraExecutor = Executors.newSingleThreadExecutor()
         outputDirectory = getMediaOutputDirectory()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onResume() {
+        super.onResume()
+        cameraExecutor = Executors.newSingleThreadExecutor()
+        binding.pvCameraCaptureViewFinder.post {
+            configureCamera()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
         cameraExecutor.shutdown()
     }
 
@@ -73,10 +80,6 @@ class CameraCaptureActivity : ComponentActivity() {
 
             ivTopBarBack.setOnClickListener {
                 finish()
-            }
-
-            pvCameraCaptureViewFinder.post {
-                configureCamera()
             }
         }
     }
@@ -125,6 +128,7 @@ class CameraCaptureActivity : ComponentActivity() {
         imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy: ImageProxy ->
             mrzProcessor.processImage(imageProxy.toCameraImage(), object : MrzProcessorResultListener {
                 override fun onSuccess(mrzInfo: MrzInfo) {
+                    imageAnalysis.clearAnalyzer()
                     imageProxy.close()
                     NfcScanningActivity.start(this@CameraCaptureActivity, mrzInfo)
                 }
