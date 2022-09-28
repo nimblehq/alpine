@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-parcelize'
+    id 'maven-publish'
 }
 
 android {
@@ -44,4 +45,18 @@ dependencies {
             "com.github.mhshams:jnbis:1.1.0",
             "net.sf.scuba:scuba-sc-android:0.0.23"
     )
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+
+                groupId = 'com.github.nimblehq'
+                artifactId = 'alpine'
+                version = '1.0.0'
+            }
+        }
+    }
 }
