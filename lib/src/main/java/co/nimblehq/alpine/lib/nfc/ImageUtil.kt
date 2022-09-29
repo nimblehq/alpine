@@ -17,25 +17,23 @@ object ImageUtil {
         val imageLength = imageInfo.imageLength
         val dataInputStream = DataInputStream(imageInfo.imageInputStream)
         val buffer = ByteArray(imageLength)
-        try {
+        return try {
             dataInputStream.readFully(buffer, 0, imageLength)
             val inputStream: InputStream = ByteArrayInputStream(buffer, 0, imageLength)
-            return Image(
+            Image(
                 decodeImage(context, imageInfo.mimeType, inputStream),
                 Base64.encodeToString(buffer, Base64.DEFAULT)
             )
         } catch (e: IOException) {
             e.printStackTrace()
+            null
         }
-        return null
     }
 
     @Throws(IOException::class)
     fun decodeImage(context: Context, mimeType: String, inputStream: InputStream): Bitmap? {
-        return if (mimeType.equals(
-                "image/jp2",
-                ignoreCase = true
-            ) || mimeType.equals("image/jpeg2000", ignoreCase = true)
+        return if (mimeType.equals("image/jp2", ignoreCase = true) ||
+            mimeType.equals("image/jpeg2000", ignoreCase = true)
         ) {
             // Save jp2 file
             val output: OutputStream = FileOutputStream(File(context.cacheDir, "temp.jp2"))
@@ -48,20 +46,19 @@ object ImageUtil {
 
             // Decode jp2 file
             val pInfo = Decoder.getAllParameters()
-            val parameters: ParameterList
             val defaults = ParameterList()
             for (i in pInfo.indices.reversed()) {
                 if (pInfo[i][3] != null) {
                     defaults[pInfo[i][0]] = pInfo[i][3]
                 }
             }
-            parameters = ParameterList(defaults)
-            parameters.setProperty("rate", "3")
-            parameters.setProperty("o", context.cacheDir.toString() + "/temp.ppm")
-            parameters.setProperty("debug", "on")
-            parameters.setProperty("i", context.cacheDir.toString() + "/temp.jp2")
-            val decoder = Decoder(parameters)
-            decoder.run()
+            val parameters = ParameterList(defaults).apply {
+                setProperty("rate", "3")
+                setProperty("o", context.cacheDir.toString() + "/temp.ppm")
+                setProperty("debug", "on")
+                setProperty("i", context.cacheDir.toString() + "/temp.jp2")
+            }
+            Decoder(parameters).run()
 
             // Read ppm file
             val reader = BufferedInputStream(
@@ -72,9 +69,15 @@ object ImageUtil {
             var widths = ""
             var heights = ""
             var temp: Char
-            while (reader.read().toChar().also { temp = it } != ' ') widths += temp
-            while (reader.read().toChar().also { temp = it } >= '0' && temp <= '9') heights += temp
-            if (reader.read() != '2'.code || reader.read() != '5'.code || reader.read() != '5'.code) return null
+            while (reader.read().toChar().also { temp = it } != ' ') {
+                widths += temp
+            }
+            while (reader.read().toChar().also { temp = it } >= '0' && temp <= '9') {
+                heights += temp
+            }
+            if (reader.read() != '2'.code || reader.read() != '5'.code || reader.read() != '5'.code) {
+                return null
+            }
             reader.read()
             val width = widths.toInt()
             val height = heights.toInt()
