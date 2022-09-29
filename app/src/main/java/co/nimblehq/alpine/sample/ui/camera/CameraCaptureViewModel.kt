@@ -4,9 +4,9 @@ import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.nimblehq.alpine.lib.AlpineLib
 import co.nimblehq.alpine.lib.model.CameraImage
 import co.nimblehq.alpine.lib.model.MrzInfo
+import co.nimblehq.alpine.lib.mrz.MrzProcessor
 import co.nimblehq.alpine.lib.mrz.MrzProcessorException
 import co.nimblehq.alpine.lib.mrz.MrzProcessorResultListener
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,7 +17,6 @@ import kotlinx.coroutines.launch
 interface Input {
 
     fun processImage(
-        cameraImage: CameraImage,
         imageProxy: ImageProxy,
         imageAnalysis: ImageAnalysis
     )
@@ -36,6 +35,8 @@ class CameraCaptureViewModel(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ViewModel(), Input, Output {
 
+    private val mrzProcessor: MrzProcessor = MrzProcessor.newInstance()
+
     private val _navigateToNfcScan = MutableSharedFlow<MrzInfo>()
     override val navigateToNfcScan: SharedFlow<MrzInfo>
         get() = _navigateToNfcScan
@@ -45,11 +46,10 @@ class CameraCaptureViewModel(
         get() = _onProcessImageFailed
 
     override fun processImage(
-        cameraImage: CameraImage,
         imageProxy: ImageProxy,
         imageAnalysis: ImageAnalysis
     ) {
-        AlpineLib.processImage(cameraImage, object : MrzProcessorResultListener {
+        mrzProcessor.processImage(imageProxy.toCameraImage(), object : MrzProcessorResultListener {
             override fun onSuccess(mrzInfo: MrzInfo) {
                 viewModelScope.launch(dispatcher) {
                     imageAnalysis.clearAnalyzer()
@@ -67,7 +67,7 @@ class CameraCaptureViewModel(
     }
 
     override fun processImageFile(filePath: String) {
-        AlpineLib.processImageFile(filePath, object : MrzProcessorResultListener {
+        mrzProcessor.processImageFile(filePath, object : MrzProcessorResultListener {
             override fun onSuccess(mrzInfo: MrzInfo) {
                 viewModelScope.launch(dispatcher) {
                     _navigateToNfcScan.emit(mrzInfo)
@@ -81,4 +81,19 @@ class CameraCaptureViewModel(
             }
         })
     }
+
+    private fun ImageProxy.toCameraImage() = CameraImage(
+        width = width,
+        height = height,
+        cropRect = cropRect,
+        format = format,
+        rotationDegrees = imageInfo.rotationDegrees,
+        planes = planes.map {
+            CameraImage.Plane(
+                rowStride = it.rowStride,
+                pixelStride = it.pixelStride,
+                buffer = it.buffer
+            )
+        }
+    )
 }

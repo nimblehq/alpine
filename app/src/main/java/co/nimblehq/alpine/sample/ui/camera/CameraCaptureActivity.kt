@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.util.Size
 import androidx.activity.ComponentActivity
+import androidx.activity.viewModels
 import androidx.camera.core.*
 import androidx.camera.core.ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888
 import androidx.camera.core.ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST
@@ -16,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import co.nimblehq.alpine.R
 import co.nimblehq.alpine.databinding.ActivityCameraCaptureBinding
-import co.nimblehq.alpine.lib.model.CameraImage
 import co.nimblehq.alpine.lib.model.MrzInfo
 import co.nimblehq.alpine.sample.extension.*
 import co.nimblehq.alpine.sample.ui.MrzInfoActivity
@@ -36,7 +36,7 @@ class CameraCaptureActivity : ComponentActivity() {
     private val loadingDialog by lazy {
         createLoadingDialog()
     }
-    private val viewModel: CameraCaptureViewModel by provideViewModels()
+    private val viewModel: CameraCaptureViewModel by viewModels()
 
     private var camera: Camera? = null
     private var cameraProvider: ProcessCameraProvider? = null
@@ -137,28 +137,12 @@ class CameraCaptureActivity : ComponentActivity() {
             .build()
         imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy: ImageProxy ->
             viewModel.processImage(
-                cameraImage = imageProxy.toCameraImage(),
                 imageProxy = imageProxy,
                 imageAnalysis = imageAnalysis
             )
         }
         return imageAnalysis
     }
-
-    private fun ImageProxy.toCameraImage() = CameraImage(
-        width = width,
-        height = height,
-        cropRect = cropRect,
-        format = format,
-        rotationDegrees = imageInfo.rotationDegrees,
-        planes = planes.map {
-            CameraImage.Plane(
-                rowStride = it.rowStride,
-                pixelStride = it.pixelStride,
-                buffer = it.buffer
-            )
-        }
-    )
 
     private fun bindViewEvents() {
         binding.ibCameraCapture.setOnClickListener {

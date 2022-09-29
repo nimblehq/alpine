@@ -3,20 +3,15 @@ package co.nimblehq.alpine.lib.mrz
 import co.nimblehq.alpine.lib.model.CameraImage
 import com.google.mlkit.vision.common.InputImage
 
-internal interface MrzProcessor {
+interface MrzProcessor {
+    fun processImageFile(filePath: String, mrzProcessorResultListener: MrzProcessorResultListener)
 
-    fun processImageFile(
-        filePath: String,
-        mrzProcessorResultListener: MrzProcessorResultListener
-    )
+    fun processImage(cameraImage: CameraImage, mrzProcessorResultListener: MrzProcessorResultListener)
 
-    fun processImage(
-        cameraImage: CameraImage,
-        mrzProcessorResultListener: MrzProcessorResultListener
-    )
+    fun processImage(inputImage: InputImage, mrzProcessorResultListener: MrzProcessorResultListener)
 
-    fun processImage(
-        inputImage: InputImage,
-        mrzProcessorResultListener: MrzProcessorResultListener
-    )
+    companion object {
+        @JvmStatic
+        fun newInstance(): MrzProcessor = MrzProcessorImpl()
+    }
 }

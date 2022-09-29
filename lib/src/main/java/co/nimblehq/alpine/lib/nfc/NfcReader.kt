@@ -6,12 +6,14 @@ import androidx.annotation.WorkerThread
 import co.nimblehq.alpine.lib.model.MrzInfo
 import co.nimblehq.alpine.lib.model.PassportInfo
 
-internal const val ISO_DEP_TIMEOUT_IN_MILLIS = 60000
-
-internal interface NfcReader {
-
-    fun initialize(context: Context)
-
+interface NfcReader {
     @WorkerThread
-    fun readNfc(tag: Tag, mrzInfo: MrzInfo, timeout: Int): PassportInfo?
+    fun readNfc(tag: Tag, mrzInfo: MrzInfo, timeout: Int = ISO_DEP_TIMEOUT_IN_MILLIS): PassportInfo?
+
+    companion object {
+        private const val ISO_DEP_TIMEOUT_IN_MILLIS = 60000
+
+        @JvmStatic
+        fun newInstance(context: Context): NfcReader = NfcReaderImpl(context)
+    }
 }
