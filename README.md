@@ -1,12 +1,10 @@
-# Git Repository Template
-
-Project repository template to set up all public projects at [Nimble](https://nimblehq.co/)
+# *A*ndroid *L*ibrary for *P*assport *I*nformation via *N*FC *E*xtraction
 
 ## Usage
 
 Clone the repository
 
-`git clone git@github.com:nimblehq/git-template.git`
+`git clone git@github.com:nimblehq/alpine.git`
 
 ## License
 
