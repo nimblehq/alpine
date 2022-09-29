@@ -129,7 +129,7 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
             val fingerprintsImage: MutableList<Bitmap> = ArrayList()
             if (allFingerImageInfos.isNotEmpty()) {
                 for (fingerImageInfo in allFingerImageInfos) {
-                    val image = ImageUtil.getImage(context, fingerImageInfo).bitmap
+                    val image = ImageUtil.getImage(context, fingerImageInfo)?.bitmap
                     image?.let(fingerprintsImage::add)
                 }
                 fingerprintsImage
@@ -186,7 +186,7 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
                     personalSummary = dg11File.personalSummary,
                     placeOfBirthConstituents = dg11File.placeOfBirth,
                     profession = dg11File.profession,
-                    proofOfCitizenship = dg11File.proofOfCitizenship,
+                    proofOfCitizenship = dg11File.proofOfCitizenship.toList(),
                     tag = dg11File.tag,
                     tags = dg11File.tagPresenceList,
                     telephone = dg11File.telephone,

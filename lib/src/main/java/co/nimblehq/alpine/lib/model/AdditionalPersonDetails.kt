@@ -15,7 +15,7 @@ data class AdditionalPersonDetails(
     val personalSummary: String?,
     val placeOfBirthConstituents: List<String>?,
     val profession: String?,
-    val proofOfCitizenship: ByteArray?,
+    val proofOfCitizenship: List<Byte>?,
     val tag: Int = 0,
     val tags: List<Int>?,
     val telephone: String?,
