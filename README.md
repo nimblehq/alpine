@@ -67,7 +67,7 @@ imageAnalysis.setAnalyzer(cameraExecutor) { imageProxy: ImageProxy ->
     mrzProcessor.processImage(imageProxy.toCameraImage(), object : MrzProcessorResultListener {
         override fun onSuccess(mrzInfo: MrzInfo) {
             imageProxy.close()
-            NfcScanningActivity.start(this@CameraCaptureActivity, mrzInfo)
+            // Do something with MrzInfo
         }
 
         override fun onError(e: MrzProcessorException) = imageProxy.close()

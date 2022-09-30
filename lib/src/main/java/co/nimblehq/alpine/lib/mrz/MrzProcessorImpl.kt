@@ -99,13 +99,12 @@ internal class MrzProcessorImpl : MrzProcessor {
     }
 
     private fun getMrzInfo(textBlocks: List<Text.TextBlock>): MrzInfo? {
-        var mrzInfo: MrzInfo? = null
         textBlocks.flatMap { textBlock ->
             textBlock.lines.flatMap { it.elements }
         }.forEach {
-            if (mrzInfo == null) mrzInfo = filterScannedText(it)
+            filterScannedText(it)?.let { mrzInfo -> return mrzInfo }
         }
-        return mrzInfo
+        return null
     }
 
     private fun filterScannedText(element: Text.Element): MrzInfo? {
