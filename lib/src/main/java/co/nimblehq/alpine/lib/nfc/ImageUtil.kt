@@ -11,7 +11,7 @@ import org.jnbis.WsqDecoder
 import java.io.*
 import kotlin.experimental.and
 
-object ImageUtil {
+internal object ImageUtil {
 
     fun getImage(context: Context, imageInfo: AbstractImageInfo): Image? {
         val imageLength = imageInfo.imageLength
