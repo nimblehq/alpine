@@ -102,6 +102,7 @@
         app:srcCompat="@drawable/ic_camera_face_frame_square" />
 
     <androidx.appcompat.widget.AppCompatImageButton
+        android:visibility="gone"
         android:id="@+id/ibCameraCapture"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

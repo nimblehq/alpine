@@ -8,7 +8,7 @@ import co.nimblehq.alpine.lib.model.PassportInfo
 
 interface NfcReader {
     @WorkerThread
-    fun readNfc(tag: Tag, mrzInfo: MrzInfo, timeout: Int = ISO_DEP_TIMEOUT_IN_MILLIS): PassportInfo?
+    fun readNfc(tag: Tag, mrzInfo: MrzInfo, timeout: Int = ISO_DEP_TIMEOUT_IN_MILLIS, progressCallback: (Float) -> Unit): PassportInfo?
 
     companion object {
         private const val ISO_DEP_TIMEOUT_IN_MILLIS = 60000

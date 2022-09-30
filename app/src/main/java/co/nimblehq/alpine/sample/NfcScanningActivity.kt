@@ -77,7 +77,9 @@ class NfcScanningActivity : ComponentActivity() {
         showMessage(getString(R.string.nfc_scanning_reading_data))
         lifecycleScope.launch(Dispatchers.Main) {
             val passportInfo = withContext(Dispatchers.IO) {
-                mrzInfo?.let { mrzInfo -> nfcReader.readNfc(tag, mrzInfo) }
+                mrzInfo?.let { mrzInfo -> nfcReader.readNfc(tag, mrzInfo) {
+                    binding.pbLoading.progress = (it * 100).toInt() }
+                }
             }
             passportInfo?.let(::loadPassportInfo) ?: showError()
         }

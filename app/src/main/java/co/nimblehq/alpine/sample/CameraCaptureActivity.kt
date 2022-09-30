@@ -156,6 +156,7 @@ class CameraCaptureActivity : ComponentActivity() {
 
     private fun bindViewEvents() {
         binding.ibCameraCapture.setOnClickListener {
+            if (true) return@setOnClickListener
             loadingDialog.show()
             imageCapture?.let {
                 val photoFile = createFile(outputDirectory)

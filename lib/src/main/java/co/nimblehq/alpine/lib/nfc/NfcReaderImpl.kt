@@ -15,9 +15,15 @@ import org.jmrtd.lds.iso19794.FaceImageInfo
 import org.jmrtd.lds.iso19794.FingerImageInfo
 import java.security.PublicKey
 
+const val STEPS = 14
+
 internal class NfcReaderImpl(private val context: Context) : NfcReader {
 
-    override fun readNfc(tag: Tag, mrzInfo: MrzInfo, timeout: Int): PassportInfo? {
+    private var currentProgress = 0f
+
+    override fun readNfc(tag: Tag, mrzInfo: MrzInfo, timeout: Int, progressCallback: (Float) -> Unit): PassportInfo? {
+        currentProgress = 0f
+
         return try {
             val bacKey = mrzInfo.run {
                 BACKey(documentNumber, dateOfBirth, dateOfExpiry)
@@ -26,6 +32,9 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
             isoDep?.timeout = timeout
             val cardService = CardService.getInstance(isoDep)
             cardService.open()
+
+            progressCallback((++currentProgress) / STEPS)
+
             val passportService = PassportService(
                 cardService,
                 PassportService.NORMAL_MAX_TRANCEIVE_LENGTH,
@@ -34,6 +43,9 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
                 false
             )
             passportService.open()
+
+            progressCallback((++currentProgress) / STEPS)
+
             var paceSucceeded = false
             try {
                 val cardSecurityFile =
@@ -52,6 +64,7 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
             } catch (e: Exception) {
                 e.printStackTrace()
             }
+            progressCallback((++currentProgress) / STEPS)
             passportService.sendSelectApplet(paceSucceeded)
             if (!paceSucceeded) {
                 try {
@@ -60,18 +73,19 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
                     passportService.doBAC(bacKey)
                 }
             }
+            progressCallback((++currentProgress) / STEPS)
 
             val dg1InputStream = passportService.getInputStream(PassportService.EF_DG1)
             val dg1File = DG1File(dg1InputStream)
             val dg1MrzInfo = dg1File.mrzInfo
 
             PassportInfo(
-                personDetails = getPersonDetails(dg1MrzInfo),
-                biometrics = getBiometrics(passportService),
-                additionalPersonDetails = getAdditionalPersonDetails(passportService),
-                additionalDocumentDetails = getAdditionalDocumentDetails(passportService),
-                documentType = DocumentType.from(dg1MrzInfo.documentCode),
-                documentPublicKey = getDocumentPublicKey(passportService)
+                personDetails = getPersonDetails(dg1MrzInfo).also { progressCallback((++currentProgress) / STEPS) },
+                biometrics = getBiometrics(passportService, progressCallback).also { progressCallback((++currentProgress) / STEPS) },
+                additionalPersonDetails = getAdditionalPersonDetails(passportService).also { progressCallback((++currentProgress) / STEPS) },
+                additionalDocumentDetails = getAdditionalDocumentDetails(passportService).also { progressCallback((++currentProgress) / STEPS) },
+                documentType = DocumentType.from(dg1MrzInfo.documentCode).also { progressCallback((++currentProgress) / STEPS) },
+                documentPublicKey = getDocumentPublicKey(passportService).also { progressCallback((++currentProgress) / STEPS) },
             )
         } catch (e: Exception) {
             e.printStackTrace()
@@ -93,12 +107,12 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
         )
     }
 
-    private fun getBiometrics(passportService: PassportService): Biometrics {
+    private fun getBiometrics(passportService: PassportService, progressCallback: (Float) -> Unit): Biometrics {
         return Biometrics(
-            faceImage = getFaceImage(passportService),
-            portraitImage = getPortraitImage(passportService),
-            signatureImage = getSignatureImage(passportService),
-            fingerprints = getFingerprints(passportService)
+            faceImage = getFaceImage(passportService).also { progressCallback((++currentProgress) / STEPS) },
+            portraitImage = getPortraitImage(passportService).also { progressCallback((++currentProgress) / STEPS) },
+            signatureImage = getSignatureImage(passportService).also { progressCallback((++currentProgress) / STEPS) },
+            fingerprints = getFingerprints(passportService).also { progressCallback((++currentProgress) / STEPS) }
         )
     }
 

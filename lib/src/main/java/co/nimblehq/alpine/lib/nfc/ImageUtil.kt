@@ -3,7 +3,7 @@ package co.nimblehq.alpine.lib.nfc
 import android.content.Context
 import android.graphics.*
 import android.util.Base64
-import co.nimblehq.alpine.lib.model.Image
+import co.nimblehq.alpine.lib.model.PassportImage
 import jj2000.j2k.decoder.Decoder
 import jj2000.j2k.util.ParameterList
 import org.jmrtd.lds.AbstractImageInfo
@@ -11,16 +11,16 @@ import org.jnbis.WsqDecoder
 import java.io.*
 import kotlin.experimental.and
 
-object ImageUtil {
+internal object ImageUtil {
 
-    fun getImage(context: Context, imageInfo: AbstractImageInfo): Image? {
+    fun getImage(context: Context, imageInfo: AbstractImageInfo): PassportImage? {
         val imageLength = imageInfo.imageLength
         val dataInputStream = DataInputStream(imageInfo.imageInputStream)
         val buffer = ByteArray(imageLength)
         return try {
             dataInputStream.readFully(buffer, 0, imageLength)
             val inputStream: InputStream = ByteArrayInputStream(buffer, 0, imageLength)
-            Image(
+            PassportImage(
                 decodeImage(context, imageInfo.mimeType, inputStream),
                 Base64.encodeToString(buffer, Base64.DEFAULT)
             )
