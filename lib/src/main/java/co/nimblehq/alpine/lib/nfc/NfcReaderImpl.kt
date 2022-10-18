@@ -102,7 +102,7 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
         )
     }
 
-    private fun getFaceImage(passportService: PassportService): Image? {
+    private fun getFaceImage(passportService: PassportService): PassportImage? {
         val dg2InputStream = passportService.getInputStream(PassportService.EF_DG2)
         val dg2File = DG2File(dg2InputStream)
         val faceInfos = dg2File.faceInfos
@@ -140,7 +140,7 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
         }
     }
 
-    private fun getPortraitImage(passportService: PassportService): Image? {
+    private fun getPortraitImage(passportService: PassportService): PassportImage? {
         return try {
             val dg5InputStream = passportService.getInputStream(PassportService.EF_DG5)
             val dg5File = DG5File(dg5InputStream)
@@ -155,7 +155,7 @@ internal class NfcReaderImpl(private val context: Context) : NfcReader {
         }
     }
 
-    private fun getSignatureImage(passportService: PassportService): Image? {
+    private fun getSignatureImage(passportService: PassportService): PassportImage? {
         return try {
             val dg7InputStream = passportService.getInputStream(PassportService.EF_DG7)
             val dg7File = DG7File(dg7InputStream)

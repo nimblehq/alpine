@@ -6,8 +6,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class Biometrics(
-    val faceImage: Image?,
-    val portraitImage: Image?,
-    val signatureImage: Image?,
+    val faceImage: PassportImage?,
+    val portraitImage: PassportImage?,
+    val signatureImage: PassportImage?,
     val fingerprints: List<Bitmap>?
 ) : Parcelable

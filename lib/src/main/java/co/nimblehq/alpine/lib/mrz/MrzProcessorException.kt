@@ -7,4 +7,5 @@ sealed class MrzProcessorException : Exception() {
     object FileNotFoundMrzProcessorException : MrzProcessorException()
     object TextNotFoundMrzProcessorException : MrzProcessorException()
     object TextNotRecognizedMrzProcessorException : MrzProcessorException()
+    object InvalidImageMrzProcessorException : MrzProcessorException()
 }
