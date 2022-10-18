@@ -1,6 +1,6 @@
 package co.nimblehq.alpine.lib.mrz
 
-import co.nimblehq.alpine.lib.model.*
+import co.nimblehq.alpine.lib.model.CameraImage
 import com.google.mlkit.vision.common.InputImage
 
 interface MrzProcessor {

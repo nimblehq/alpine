@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.sample
+package co.nimblehq.alpine.sample.ui
 
 import android.annotation.SuppressLint
 import android.app.Activity

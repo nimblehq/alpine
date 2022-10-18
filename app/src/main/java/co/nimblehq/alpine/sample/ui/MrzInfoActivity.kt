@@ -1,4 +1,4 @@
-package co.nimblehq.alpine.sample
+package co.nimblehq.alpine.sample.ui
 
 import android.app.Activity
 import android.content.Intent
